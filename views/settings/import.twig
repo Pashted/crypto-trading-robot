@@ -1,0 +1,51 @@
+<div>
+    <p class="uk-legend">Import data from exchange</p>
+
+
+    <div class="uk-margin-small">
+        <label class="uk-form-label" for="period">Timeframe</label>
+        <div class="uk-form-controls">
+            <select name="timeframe"
+                    id="timeframe"
+                    class="uk-select uk-form-width-small">
+                {% for timeframe in defaults.timeframes %}
+                    <option value="{{ timeframe }}" {{ timeframe == settings.timeframe ? 'selected' }}>{{ timeframe }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="uk-margin-small">
+        <label class="uk-form-label" for="period">Period</label>
+        <div class="uk-form-controls">
+            <input type="text"
+                   name="period"
+                   id="period"
+                   class="uk-input uk-form-width-small"
+                   value="{{ settings.period[0] }}">
+            <input type="text"
+                   name="period"
+                   class="uk-input uk-form-width-small"
+                   value="{{ settings.period[1] }}">
+        </div>
+    </div>
+
+
+    <p>
+        <button type="button" class="getCandles uk-button uk-button-small uk-button-secondary" uk-tooltip="Get candles from exchange and save them to the local database">
+            Get candles
+        </button>
+    </p>
+
+    {% if candles %}
+        <ul uk-accordion>
+            <li>
+                <a class="uk-accordion-title" href="#">Show</a>
+                <div class="uk-accordion-content">
+                    <pre>{{ candles }}</pre>
+                </div>
+            </li>
+        </ul>
+    {% endif %}
+
+</div>

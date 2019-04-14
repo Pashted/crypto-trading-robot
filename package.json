@@ -1,0 +1,23 @@
+{
+    "name": "crypto-trading-robot",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start": "node ./bin/www"
+    },
+    "dependencies": {
+        "@amcharts/amcharts4": "^4.3.14",
+        "bitfinex-api-node": "^2.0.5",
+        "chosenjs": "^1.4.3",
+        "cookie-parser": "~1.4.3",
+        "debug": "^4.1.1",
+        "express": "~4.16.0",
+        "http-errors": "^1.7.2",
+        "jquery": "^3.3.1",
+        "mongodb": "^3.2.3",
+        "morgan": "~1.9.0",
+        "request": "^2.88.0",
+        "twig": "^1.13.2",
+        "uikit": "^3.0.3"
+    }
+}

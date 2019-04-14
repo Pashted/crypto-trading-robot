@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ title }}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <script src="/jquery.js"></script>
+    <script src="/chosen.js"></script>
+    <script src="/uikit.js"></script>
+    <script src="/uikit-icons.js"></script>
+
+    <script src="/javascripts/main.js"></script>
+
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+<div class="uk-container uk-container-expand uk-margin-large-top">
+
+    <div class="uk-grid">
+
+        {% embed "sidebar.twig" %}{% endembed %}
+
+        <div class="uk-width-expand uk-animation-slide-left-small">
+
+            {% if title %}
+                <h1>{{ title }}</h1>
+            {% endif %}
+
+            {% if description %}
+                <p class="uk-text-lead">{{ description }}</p>
+                <hr>
+            {% endif %}
+
+            <section class="uk-section uk-section-xsmall">{% block content %}{% endblock %}</section>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+</body>
+</html>

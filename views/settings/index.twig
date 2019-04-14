@@ -1,0 +1,27 @@
+{% extends '../index.twig' %}
+
+{% block head %}
+    <script src="/javascripts/settings.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    <form action="/settings/" method="POST" class="uk-form-horizontal settings-form">
+
+        <div class="uk-switcher">
+            {% embed "./exchange.twig" %}{% endembed %}
+
+            {% embed "./import.twig" %}{% endembed %}
+
+            {% embed "./strategy.twig" %}{% endembed %}
+
+            {% embed "./interface.twig" %}{% endembed %}
+        </div>
+
+        <hr>
+        <p class="uk-margin-medium">
+            <button type="button" class="uk-button uk-button-primary save">Save</button>
+            <button type="button" class="uk-button uk-button-default reset">Reset</button>
+        </p>
+    </form>
+{% endblock %}

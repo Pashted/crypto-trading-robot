@@ -1,0 +1,38 @@
+<aside class="uk-width-medium@s uk-width-small">
+
+    <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
+
+        <li class="{{ section ?: 'uk-active' }}">
+            <a href="/"><span uk-icon="home"></span> Mainpage</a>
+        </li>
+
+        <li class="uk-parent {{ section == 'trading' ? 'uk-active  uk-open' }}">
+            <a href="/trading/"><span uk-icon="bolt"></span> Trading</a>
+
+            <ul class="uk-tab-right uk-margin-left" uk-tab="connect: .trading-form .uk-switcher; media: 0; active: {{ tab ?? 0 }}">
+                <li><a>Emulation</a></li>
+                <li><a>Realtime</a></li>
+            </ul>
+
+        </li>
+
+        <li class="uk-parent {{ section == 'settings' ? 'uk-active uk-open' }}">
+            <a href="/settings/"><span uk-icon="nut"></span> Settings</a>
+
+            <ul class="uk-tab-right uk-margin-left" uk-tab="connect: .settings-form .uk-switcher; media: 0; active: {{ tab ?? 0 }}">
+                <li><a>Exchange</a></li>
+                <li><a>Data Import</a></li>
+                <li><a>Strategy</a></li>
+                <li><a>Interface</a></li>
+            </ul>
+
+        </li>
+
+        <li class="{{ section == 'help' ? 'uk-active' }}">
+            <a href="/help/"><span uk-icon="question"></span> Help</a>
+        </li>
+
+
+    </ul>
+
+</aside>

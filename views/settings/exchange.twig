@@ -1,0 +1,91 @@
+<div>
+    <p class="uk-legend">Exchange parameters</p>
+
+
+    <div class="uk-margin-small">
+        <label class="uk-form-label" for="exchange">Selected exchange</label>
+
+        <div class="uk-form-controls">
+
+            <select name="exchange"
+                    id="exchange"
+                    class="uk-select uk-form-width-medium">
+                {% for i, name in exchanges %}
+                    {% set current = settings.exchange ?? defaults.settings.exchange %}
+                    <option value="{{ name }}" {{ name == current ? 'selected' }}>{{ name|capitalize }}</option>
+                {% endfor %}
+            </select>
+
+        </div>
+    </div>
+
+    <div class="uk-margin-small">
+        <label class="uk-form-label" for="api-key">Api-key</label>
+
+        <div class="uk-form-controls">
+            <div class="uk-inline">
+                <a class="uk-form-icon uk-form-icon-flip" uk-icon="lock" uk-tooltip="Show the key"></a>
+                <input type="password"
+                       name="apiKey"
+                       id="api-key"
+                       class="uk-input uk-form-width-large"
+                       value="{{ settings.apiKey }}">
+            </div>
+        </div>
+    </div>
+
+    <div class="uk-margin-small">
+        <label class="uk-form-label" for="symbol">Symbols</label>
+
+        <div class="uk-form-controls">
+
+            {% if symbols %}
+
+                <select name="symbol"
+                        id="symbol"
+                        {# multiple size="10"#}
+                        class="uk-select uk-form-width-medium">
+
+                    {% for symbol, pairs in symbols %}
+                        {% if symbol != '_id' %}
+                            <option value="{{ symbol }}"
+                                    data-pairs="{{ pairs }}" {{ symbol == settings.symbol ? 'selected' }}>
+                                {{ symbol }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+
+                </select>
+
+                <select name="pair"
+                        id="pair"
+                        {# multiple size="10"#}
+                        class="uk-select uk-form-width-medium"
+                        data-value="{{ settings.pair }}"
+                        data-default="{{ defaults.settings.pair }}">
+                </select>
+
+            {% endif %}
+
+            {#<button type="button" class="update uk-icon-button" uk-icon="refresh" uk-tooltip="Get symbols from exchange and save them to the local database"></button>#}
+            <button type="button" class="getSymbols uk-button uk-button-small uk-button-secondary" uk-tooltip="Get symbols from exchange and save them to the local database">
+                Get symbols
+            </button>
+
+        </div>
+    </div>
+
+
+    <div class="uk-margin-small">
+        <label class="uk-form-label" for="selected-pair">Selected pair:</label>
+        <div class="uk-form-controls">
+            <input type="text"
+                   name="selectedPair"
+                   id="selected-pair"
+                   class="uk-input uk-form-blank uk-form-width-medium"
+                   value="{{ settings.selectedPair }}"
+                   required>
+        </div>
+    </div>
+
+</div>
