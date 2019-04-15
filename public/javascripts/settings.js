@@ -11,7 +11,8 @@
             last_pair = pairs.data('value'),
 
             section_icon = $('aside .uk-active [uk-icon]').attr('uk-icon'),
-            notification_timeout = 1000 * 1.5;
+            note_timeout = 1000 * 2,
+            note_style = 'success';
 
         syms.on({
             change() {
@@ -89,11 +90,13 @@
                     console.log(res);
 
                     UIkit.notification({
-                        message: `<span uk-icon='${section_icon}'></span> Settings saved.`,
-                        status:  'primary',
+                        message: `<span uk-icon='${section_icon}'></span> Settings saved`,
+                        status:  note_style,
                         pos:     'bottom-right',
-                        timeout: notification_timeout
+                        timeout: note_timeout
                     });
+
+                    setTimeout(() => window.location.reload(), note_timeout / 3);
 
                 },
                 complete() {
@@ -118,12 +121,12 @@
 
                     UIkit.notification({
                         message: `<span uk-icon='${section_icon}'></span> Settings reset complete!`,
-                        status:  'primary',
+                        status:  note_style,
                         pos:     'bottom-right',
-                        timeout: notification_timeout
+                        timeout: note_timeout
                     });
 
-                    setTimeout(() => window.location.reload(), notification_timeout / 3);
+                    setTimeout(() => window.location.reload(), note_timeout / 3);
 
                 },
             });
@@ -148,13 +151,13 @@
                     console.log(res);
 
                     UIkit.notification({
-                        message: `<span uk-icon='${section_icon}'></span> Symbols updated.`,
-                        status:  'primary',
+                        message: `<span uk-icon='${section_icon}'></span> Symbols updated`,
+                        status:  note_style,
                         pos:     'bottom-right',
-                        timeout: notification_timeout
+                        timeout: note_timeout
                     });
 
-                    setTimeout(() => window.location.reload(), notification_timeout / 3);
+                    setTimeout(() => window.location.reload(), note_timeout / 3);
 
                 },
             });
@@ -179,13 +182,13 @@
                     console.log(res);
 
                     UIkit.notification({
-                        message: `<span uk-icon='${section_icon}'></span> Candles updated.`,
-                        status:  'primary',
+                        message: `<span uk-icon='${section_icon}'></span> Candles updated`,
+                        status:  note_style,
                         pos:     'bottom-right',
-                        timeout: notification_timeout
+                        timeout: note_timeout
                     });
 
-                    setTimeout(() => window.location.reload(), notification_timeout / 3);
+                    setTimeout(() => window.location.reload(), note_timeout / 3);
 
                 },
             });
