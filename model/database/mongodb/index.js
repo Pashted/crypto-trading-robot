@@ -1,4 +1,5 @@
-const MongoClient = require('mongodb').MongoClient;
+const MongoClient = require('mongodb').MongoClient,
+    dbName = 'crypto_trading_robot';
 
 console.log('>> DB START CONNECT');
 
@@ -18,7 +19,7 @@ client.connect(err => {
 
 // TODO: add update collection method for partial saving
 
-module.exports = dbName => {
+module.exports = () => {
 
 
     return {
