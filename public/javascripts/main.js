@@ -64,6 +64,8 @@
             }
         });
 
+        // TODO: if no tab has performed, but popstate has fired, go on 1st tab, if it possible
+
         let tabs = $('aside .uk-open .uk-tab');
 
         window.onpopstate = function () {

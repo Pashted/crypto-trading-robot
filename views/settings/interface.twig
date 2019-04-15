@@ -10,6 +10,10 @@
                     class="uk-select uk-form-width-medium"
                     data-value="{{ settings.theme }}"
                     data-default="{{ defaultTheme }}">
+                {% for style in defaults.themes %}
+                    {% set selected = settings.theme ?? defauts.settings.theme %}
+                    <option value="{{ style }}" {{ style == selected ? 'selected' }}>{{ style|capitalize }}</option>{{ }}
+                {% endfor %}
             </select>
         </div>
     </div>
