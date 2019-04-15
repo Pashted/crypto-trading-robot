@@ -6,7 +6,7 @@
         "selectedPair": "BTCUSD",
         "timeframe":    "1h",
         "exchange":     "bitfinex",
-        "theme":        "light"
+        "theme":        "dark"
     },
     "symbols":    {
         "BTC": ["USD"]

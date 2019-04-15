@@ -13,6 +13,7 @@
 
 @form-legend-line-height: @text-lead-line-height;
 
+
 @nav-default-font-size: 1.15rem;
 
 //@tooltip-font-size: @global-small-font-size;
@@ -62,13 +63,16 @@
 }
 
 aside {
+    background: @global-background;
+    box-shadow: -9000px 0 0 9000px @global-background;
     [uk-icon] {
         margin:         4px 5px 0 0;
         vertical-align: top;
     }
 }
 
-.uk-notification-message {
+.hook-notification-message {
+    font-weight: 600;
     > div {
         [uk-icon] {
             vertical-align: top;

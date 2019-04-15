@@ -46,6 +46,8 @@
 @icon-button-active-color: @button-primary-active-background;
 
 @notification-message-background: @global-background;
+//@notification-message-background: @global-primary-background;
+//@notification-message-primary-color: @button-primary-color;
 
 @form-select-option-color: @global-color;
 @form-background: #1b1b1b;
@@ -85,19 +87,13 @@
 //    border-color: @button-primary-active-background;
 //}
 
-
 .hook-nav-default-item-active {
-    color:       @base-heading-color;
+    color: @base-heading-color;
 }
 
 .hook-nav-default-item-active {
     background: #222;
     box-shadow: -40px 0 0 0 #222;
-}
-
-aside {
-    background: @global-background;
-    box-shadow: -9000px 0 0 9000px @global-background;
 }
 
 .chosen-container {
@@ -109,7 +105,7 @@ aside {
         border-color:  @button-primary-hover-background;
     }
     .chosen-results {
-        color:      @form-focus-color;
+        color: @form-focus-color;
         li.highlighted {
             font-weight: 700;
             background:  @button-primary-hover-background;
