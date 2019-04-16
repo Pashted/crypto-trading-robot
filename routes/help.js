@@ -1,6 +1,6 @@
 const express = require('express'),
     router = express.Router(),
-    database = require('../model/database/mongodb')(),
+    database = require('../model/database/mongodb'),
     defaults = require('../model/defaults');
 
 
