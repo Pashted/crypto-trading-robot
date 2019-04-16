@@ -1,7 +1,7 @@
 const express = require('express'),
     router = express.Router(),
     ex = require('../model/exchange'), // exchange module factory
-    database = require('../model/database/mongodb')(),
+    database = require('../model/database/mongodb'),
     defaults = require('../model/defaults');
 
 // TODO settings.prototype instead separate variable
