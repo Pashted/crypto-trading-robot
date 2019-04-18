@@ -15,6 +15,7 @@ module.exports = {
             request.get(
                 this.url + '/conf/pub:list:pair:exchange',
                 (error, response, body) => {
+                    if (error) throw error;
 
                     let symbols = {},
                         result = JSON.parse(body);
@@ -55,6 +56,7 @@ module.exports = {
             request.get(
                 this.url + `/candles/trade:${params.timeframe}:t${params.selectedPair}/hist`,
                 (error, response, body) => {
+                    if (error) throw error;
 
                     let candles = [],
                         result = JSON.parse(body);
