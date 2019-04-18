@@ -1,7 +1,6 @@
 <div>
     <p class="uk-legend">Exchange parameters</p>
 
-
     <div class="uk-margin-small">
         <label class="uk-form-label" for="exchange">Selected exchange</label>
 
@@ -11,8 +10,7 @@
                     id="exchange"
                     class="uk-select uk-form-width-medium">
                 {% for i, name in exchanges %}
-                    {% set current = settings.exchange ?? defaults.settings.exchange %}
-                    <option value="{{ name }}" {{ name == current ? 'selected' }}>{{ name|capitalize }}</option>
+                    <option value="{{ name }}" {{ name == settings.user.exchange ? 'selected' }}>{{ name|capitalize }}</option>
                 {% endfor %}
             </select>
 
@@ -29,7 +27,7 @@
                        name="apiKey"
                        id="api-key"
                        class="uk-input uk-form-width-large"
-                       value="{{ settings.apiKey }}">
+                       value="{{ settings.user.apiKey }}">
             </div>
         </div>
     </div>
@@ -39,33 +37,27 @@
 
         <div class="uk-form-controls">
 
-            {% if symbols %}
+            <select name="symbol"
+                    id="symbol"
+                    {# multiple size="10"#}
+                    class="uk-select uk-form-width-medium">
 
-                <select name="symbol"
-                        id="symbol"
-                        {# multiple size="10"#}
-                        class="uk-select uk-form-width-medium">
+                {% for symbol, pairs in settings.symbols %}
+                    <option value="{{ symbol }}"
+                            data-pairs="{{ pairs }}" {{ symbol == settings.user.symbol ? 'selected' }}>
+                        {{ symbol }}
+                    </option>
+                {% endfor %}
 
-                    {% for symbol, pairs in symbols %}
-                        {% if symbol != '_id' %}
-                            <option value="{{ symbol }}"
-                                    data-pairs="{{ pairs }}" {{ symbol == settings.symbol ? 'selected' }}>
-                                {{ symbol }}
-                            </option>
-                        {% endif %}
-                    {% endfor %}
+            </select>
 
-                </select>
-
-                <select name="pair"
-                        id="pair"
-                        {# multiple size="10"#}
-                        class="uk-select uk-form-width-medium"
-                        data-value="{{ settings.pair }}"
-                        data-default="{{ defaults.settings.pair }}">
-                </select>
-
-            {% endif %}
+            <select name="pair"
+                    id="pair"
+                    {# multiple size="10"#}
+                    class="uk-select uk-form-width-medium"
+                    data-value="{{ settings.user.pair }}"
+                    data-default="{{ settings.user.__proto__.pair }}">
+            </select>
 
             {#<button type="button" class="update uk-icon-button" uk-icon="refresh" uk-tooltip="Get symbols from exchange and save them to the local database"></button>#}
             <button type="button" class="getSymbols uk-button uk-button-small uk-button-secondary" uk-tooltip="Get symbols from exchange and save them to the local database">
@@ -83,7 +75,7 @@
                    name="selectedPair"
                    id="selected-pair"
                    class="uk-input uk-form-blank uk-form-width-medium"
-                   value="{{ settings.selectedPair }}"
+                   value="{{ settings.user.selectedPair }}"
                    required>
         </div>
     </div>
@@ -97,8 +89,8 @@
             <select name="timeframe"
                     id="timeframe"
                     class="uk-select uk-form-width-small">
-                {% for timeframe in defaults.timeframes %}
-                    <option value="{{ timeframe }}" {{ timeframe == settings.timeframe ? 'selected' }}>{{ timeframe }}</option>
+                {% for timeframe in settings.timeframes %}
+                    <option value="{{ timeframe }}" {{ timeframe == settings.user.timeframe ? 'selected' }}>{{ timeframe }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -111,11 +103,11 @@
                    name="period"
                    id="period"
                    class="uk-input uk-form-width-small"
-                   value="{{ settings.period[0] }}">
+                   value="{{ settings.user.period[0] }}">
             <input type="text"
                    name="period"
                    class="uk-input uk-form-width-small"
-                   value="{{ settings.period[1] }}">
+                   value="{{ settings.user.period[1] }}">
         </div>
     </div>
 
@@ -126,12 +118,12 @@
         </button>
     </p>
 
-    {% if candles %}
+    {% if settings.candles|length > 2 %}
         <ul uk-accordion>
             <li>
-                <a class="uk-accordion-title" href="#">Show</a>
+                <a class="uk-accordion-title" href="#">Show candles</a>
                 <div class="uk-accordion-content">
-                    <pre>{{ candles }}</pre>
+                    <pre>{{ settings.candles }}</pre>
                 </div>
             </li>
         </ul>
