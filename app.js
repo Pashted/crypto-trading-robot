@@ -12,7 +12,7 @@ var path = require('path'),
 
     app = express(),
 
-    defaults = require('./model/defaults');
+    defaults = require('./model/default-settings');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
