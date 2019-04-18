@@ -38,7 +38,7 @@ module.exports = {
 
                     collection.find()
                         .toArray((err, results) => {
-                            if (err) throw err;
+                            if (err) reject(err);
 
                             // console.log(`>> GET ${collectionName} results`, results);
 

@@ -1,19 +1,19 @@
 const express = require('express'),
     router = express.Router(),
     ex = require('../model/exchange'), // exchange module factory
-    database = require('../model/database/mongodb'),
+    db = require('../model/database/mongodb'),
     defaults = require('../model/defaults');
 
 // TODO settings.prototype instead separate variable
 
 router.get('/', (req, res, next) => {
 
-    database.get('settings', defaults.settings)
+    db.get('settings', defaults.settings)
 
         .catch(err => next(new Error(err)))
 
-        .then(settings => database.get('symbols', {})
-            .then(symbols => database.get('candles', {})
+        .then(settings => db.get('symbols', {})
+            .then(symbols => db.get('candles', {})
                 .then(candles => {
                     candles = candles.params !== undefined ? JSON.stringify(candles, null, 4) : null;
 
@@ -47,22 +47,22 @@ router.post('/', (req, res, next) => {
     switch (req.body.method) {
         case 'getSymbols':
             p = exchange.get_symbols()
-                .then(symbols => database.set('symbols', symbols));
+                .then(symbols => db.set('symbols', symbols));
             break;
 
         case 'getCandles':
             p = exchange.get_candles(params)
-                .then(candles => database.set('candles', candles));
+                .then(candles => db.set('candles', candles));
             break;
 
         case 'resetSettings':
-            p = database.set('settings', params)
-                .then(() => database.set('candles', {}))
-                .then(() => database.set('symbols', defaults.symbols));
+            p = db.set('settings', params)
+                .then(() => db.set('candles', {}))
+                .then(() => db.set('symbols', defaults.symbols));
             break;
 
         case 'saveSettings':
-            p = database.set('settings', params);
+            p = db.set('settings', params);
             break;
 
         default:
