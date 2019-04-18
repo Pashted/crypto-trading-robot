@@ -1,7 +1,7 @@
 const express = require('express'),
     router = express.Router(),
     ex = require('../model/exchange'), // exchange module factory
-    database = require('../model/database/mongodb'),
+    db = require('../model/database/mongodb'),
     get_settings = require('../model/settings');
 
 
@@ -35,22 +35,22 @@ router.post('/', async (req, res, next) => {
     switch (req.body.method) {
         case 'getSymbols':
             p = exchange.get_symbols()
-                .then(symbols => database.set('symbols', symbols));
+                .then(symbols => db.set('symbols', symbols));
             break;
 
         case 'getCandles':
             p = exchange.get_candles(params)
-                .then(candles => database.set('candles', candles));
+                .then(candles => db.set('candles', candles));
             break;
 
         case 'resetSettings':
-            p = database.set('settings', {})
-                .then(() => database.set('candles', {}))
-                .then(() => database.set('symbols', {}));
+            p = db.set('settings', {})
+                .then(() => db.set('candles', {}))
+                .then(() => db.set('symbols', {}));
             break;
 
         case 'saveSettings':
-            p = database.set('settings', params);
+            p = db.set('settings', params);
             break;
 
         default:

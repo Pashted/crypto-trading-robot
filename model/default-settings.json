@@ -7,7 +7,7 @@
         "selectedPair": "BTCUSD",
         "period":       ["1", "2"],
         "timeframe":    "1h",
-        "theme":        "light"
+        "theme":        "dark"
     },
     "symbols":    {
         "BTC": ["USD"]
