@@ -10,7 +10,9 @@ var path = require('path'),
     tradingRouter = require('./routes/trading'),
     helpRouter = require('./routes/help'),
 
-    app = express();
+    app = express(),
+
+    defaults = require('./model/default-settings');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -41,7 +43,7 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    res.render('error', { defaults });
 });
 
 module.exports = app;

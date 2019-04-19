@@ -1,11 +1,13 @@
 {
-    "settings":   {
+    "user":       {
+        "exchange":     "bitfinex",
         "apiKey":       "",
         "symbol":       "BTC",
         "pair":         "USD",
         "selectedPair": "BTCUSD",
+        "period":       ["1", "2"],
         "timeframe":    "1h",
-        "exchange":     "bitfinex"
+        "theme":        "dark"
     },
     "symbols":    {
         "BTC": ["USD"]
@@ -15,5 +17,6 @@
         "1h", "3h", "6h", "12h",
         "1D", "7D", "14D",
         "1M"
-    ]
+    ],
+    "themes":     ["light", "dark"]
 }

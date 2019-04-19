@@ -1,13 +1,17 @@
-var express = require('express');
-var router = express.Router();
-var fs = require('fs');
+const express = require('express'),
+    router = express.Router(),
+    get_settings = require('../model/settings'),
+    fs = require('fs');
 
+router.get('/', async (req, res, next) => {
 
-router.get('/', (req, res, next) =>
-    res.render('index', {
-        title:       'Crypto Trading Robot',
-        description: 'Welcome to the app'
-    })
+        res.render('index', {
+            title:       'Crypto Trading Robot',
+            description: 'Welcome to the app',
+            settings:    await get_settings()
+        });
+
+    }
 );
 
 router.get('/jquery.js', (req, res, next) =>

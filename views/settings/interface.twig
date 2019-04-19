@@ -8,8 +8,11 @@
             <select name="theme"
                     id="theme"
                     class="uk-select uk-form-width-medium"
-                    data-value="{{ settings.theme }}"
-                    data-default="{{ defaultTheme }}">
+                    data-value="{{ settings.user.theme }}"
+                    data-default="{{ settings.user.__proto__.theme }}">
+                {% for style in settings.themes %}
+                    <option value="{{ style }}" {{ style == settings.user.theme ? 'selected' }}>{{ style|capitalize }}</option>
+                {% endfor %}
             </select>
         </div>
     </div>

@@ -1,0 +1,99 @@
+@import (inline) "../../node_modules/chosenjs/chosen.css";
+@import "../../node_modules/uikit/src/less/uikit.theme.less";
+
+// TODO: add local font-face
+
+@global-font-family: "Open Sans", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+@base-heading-font-family: "Roboto Condensed", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+@button-text-border-width: 2px;
+
+@icon-button-border-radius: 0;
+@icon-button-size: 40px;
+
+@form-legend-line-height: @text-lead-line-height;
+
+
+@nav-default-font-size: 1.15rem;
+
+//@tooltip-font-size: @global-small-font-size;
+@tooltip-border-radius: 0;
+//@tooltip-padding-vertical: 5px;
+//@tooltip-padding-horizontal: 10px;
+
+
+.hook-text-lead, .hook-form-legend {
+    font-weight: 300;
+}
+
+.hook-form-legend {
+    .uk-heading-divider;
+}
+
+.hook-nav-default-item-active {
+    font-weight: 600;
+}
+
+.hook-button {
+    font-weight: 600;
+}
+
+.hook-button, .uk-select {
+    cursor: pointer;
+}
+
+.hook-button-disabled, .hook-form-disabled, .hook-button-text-disabled {
+    cursor: default;
+}
+
+.hook-button-text {
+    padding: 2px 0;
+}
+
+.hook-nav-default-item {
+    padding-right: @padding-small-padding;
+}
+
+.hook-nav-sub {
+    font-size: @global-small-font-size;
+}
+
+.uk-nav .uk-parent:not(.uk-open) > ul {
+    display: none;
+}
+
+aside {
+    background: @global-background;
+    box-shadow: -9000px 0 0 9000px @global-background;
+    [uk-icon] {
+        margin:         4px 5px 0 0;
+        vertical-align: top;
+    }
+}
+
+.hook-notification-message {
+    font-weight: 600;
+    > div {
+        [uk-icon] {
+            vertical-align: top;
+            margin-top:     4px;
+            margin-right:   5px;
+        }
+    }
+}
+
+.uk-form-width-small + .chosen-container {
+    min-width: 130px;
+}
+
+.uk-form-width-medium + .chosen-container {
+    min-width: 200px;
+}
+
+.chosen-container {
+    font:      inherit;
+    min-width: 100px;
+    .chosen-results {
+        max-height: 300px;
+    }
+}

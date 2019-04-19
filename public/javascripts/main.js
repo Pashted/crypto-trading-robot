@@ -29,7 +29,7 @@
 
 
         $('select').chosen({
-            disable_search_threshold: 10
+            disable_search_threshold: 12
         });
 
 
@@ -63,6 +63,8 @@
                 is_popstate = false;
             }
         });
+
+        // TODO: if no tab has performed, but popstate has fired, go on 1st tab, if it possible
 
         let tabs = $('aside .uk-open .uk-tab');
 

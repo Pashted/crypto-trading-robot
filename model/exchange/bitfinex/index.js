@@ -15,6 +15,7 @@ module.exports = {
             request.get(
                 this.url + '/conf/pub:list:pair:exchange',
                 (error, response, body) => {
+                    if (error) throw error;
 
                     let symbols = {},
                         result = JSON.parse(body);
@@ -55,14 +56,15 @@ module.exports = {
             request.get(
                 this.url + `/candles/trade:${params.timeframe}:t${params.selectedPair}/hist`,
                 (error, response, body) => {
+                    if (error) throw error;
 
-                    let candles = [],
+                    let data = [],
                         result = JSON.parse(body);
 
                     console.log(`>> EX ${params.selectedPair} CANDLES result`, result);
 
                     result.forEach(candle => {
-                        candles.push({
+                        data.push({
                             timestamp: candle[0],
                             OPEN:      candle[1],
                             CLOSE:     candle[2],
@@ -72,7 +74,7 @@ module.exports = {
                         });
                     });
 
-                    resolve({ params, candles });
+                    resolve({ params, data });
                 }
             );
 
