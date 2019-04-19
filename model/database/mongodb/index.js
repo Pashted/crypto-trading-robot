@@ -38,14 +38,13 @@ module.exports = {
 
                     collection.find()
                         .toArray((err, results) => {
-                            if (err) throw err;
+                            if (err) reject(err);
 
                             // console.log(`>> GET ${collectionName} results`, results);
 
                             if (results === null || !results.length) {
 
-                                this.insert(collection, _default)
-                                    .then(result => resolve(result[0]));
+                                resolve({});
 
                             } else {
                                 resolve(results[0]);
@@ -59,30 +58,6 @@ module.exports = {
             }
         );
     },
-
-
-    /**
-     * @description Inserts new collection into DB
-     * @param collection
-     * @param data
-     * @returns {Promise}
-     */
-    async insert(collection, data) {
-
-        await this.connect;
-
-        return new Promise(resolve =>
-
-            collection.insertOne(data, (err, result) => {
-                if (err) throw err;
-
-                console.log('>> INSERT results', result.ops);
-
-                resolve(result.ops);
-            })
-        );
-    },
-
 
     /**
      * @description Replaces DB collection with the new one
