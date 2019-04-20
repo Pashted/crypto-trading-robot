@@ -1,5 +1,11 @@
+let icons = require('uikit-icons');
+icons(UIkit);
+
+require('chosenjs');
+
 (function ($) {
     $(document).ready(function () {
+        console.log('>> RUN_ main.js');
 
         $.fn.serializeJSON = function () {
             let result = {};

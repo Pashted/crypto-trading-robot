@@ -1,13 +1,19 @@
-const webpack = require('webpack');
+const webpack = require('webpack'),
+    path = require('path');
 
 module.exports = {
+    context:  path.resolve('./public/javascripts/src/pages'),
     mode:    'development',
-    context: __dirname,
     devtool: "source-map",
-    entry:   "./public/javascripts/src/index.js",
+    entry:   {
+        home:     './home.js',
+        trading:  './trading.js',
+        settings: './settings.js',
+        help:     './help.js',
+    },
     resolve: {
         alias: {
-            'uikit-icons': '../../../node_modules/uikit/dist/js/uikit-icons',
+            'uikit-icons': path.resolve('./node_modules/uikit/dist/js/uikit-icons'),
         }
     },
     plugins: [
@@ -21,7 +27,7 @@ module.exports = {
         })
     ],
     output:  {
-        path:     __dirname + "/public/javascripts",
-        filename: "bundle.js"
+        path:     path.resolve('./public/javascripts/dist'),
+        filename: "[name].js"
     }
 };
