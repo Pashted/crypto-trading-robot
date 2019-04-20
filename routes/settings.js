@@ -1,6 +1,6 @@
 const express = require('express'),
     router = express.Router(),
-    ex = require('../model/exchange'), // exchange module factory
+    exchanges = require('../model/exchange'), // list of available exchange models
     db = require('../model/database/mongodb'),
     get_settings = require('../model/settings');
 
@@ -10,11 +10,11 @@ const express = require('express'),
 router.get('/', async (req, res, next) => {
 
     res.render('settings/index', {
-        section:   'settings',
-        title:     'Settings section',
-        tab:       (req.query.tab || 1) - 1,
-        exchanges: ex._list,
-        settings:  await get_settings()
+        section:  'settings',
+        title:    'Settings section',
+        tab:      (req.query.tab || 1) - 1,
+        settings: await get_settings(),
+        exchanges
     });
 
 });
@@ -27,7 +27,7 @@ router.post('/', async (req, res, next) => {
 
         params = req.body.params ? JSON.parse(req.body.params) : settings.user.__proto__,
 
-        exchange = ex[params.exchange];
+        exchange = require('./../model/exchange/' + params.exchange),
         filter = {
             'params.exchange': params.exchange
         };
