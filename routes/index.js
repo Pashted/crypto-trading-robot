@@ -5,7 +5,7 @@ const express = require('express'),
 
 router.get('/', async (req, res, next) => {
 
-        res.render('index', {
+        res.render('home/index', {
             title:       'Crypto Trading Robot',
             description: 'Welcome to the app',
             settings:    await get_settings()
