@@ -1,45 +1,40 @@
 const express = require('express'),
     router = express.Router(),
-    ex = require('../model/exchange'), // exchange module factory
-    database = require('../model/database/mongodb')(),
-    defaults = require('../model/defaults');
+    exchanges = require('../model/exchange'), // list of available exchange models
+    db = require('../model/database/mongodb'),
+    get_settings = require('../model/settings');
+
 
 // TODO settings.prototype instead separate variable
 
-router.get('/', (req, res, next) => {
+router.get('/', async (req, res, next) => {
 
-    database.get('settings', defaults.settings)
-
-        .catch(err => next(new Error(err)))
-
-        .then(settings => database.get('symbols', {})
-            .then(symbols => database.get('candles', {})
-                .then(candles => {
-                    candles = candles.params !== undefined ? JSON.stringify(candles, null, 4) : null;
-
-                    console.log('>> Settings is', settings);
-                    res.render('settings/index', {
-                        section:   'settings',
-                        title:     'Settings section',
-                        tab:       (req.query.tab || 1) - 1,
-                        exchanges: ex._list,
-                        settings, defaults, symbols, candles,
-                    })
-
-                })
-            )
-        );
+    res.render('settings/index', {
+        section:  'settings',
+        title:    'Settings section',
+        tab:      (req.query.tab || 1) - 1,
+        settings: await get_settings(),
+        exchanges
+    });
 
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
 
     console.log('>> INCOMING POST REQUEST:', req.body);
 
-    let params = req.body.params ? JSON.parse(req.body.params) : defaults.settings;
-    console.log('>> PARAMS', params);
+    const settings = await get_settings(),
 
-    const exchange = ex[params.exchange || defaults.settings.exchanges];
+        params = req.body.params
+                 ? JSON.parse(req.body.params)
+                 : settings.user,
+
+        exchange = require('./../model/exchange/' + params.exchange),
+        filter = {
+            'params.exchange': params.exchange
+        };
+
+    console.log('>> POST PARAMS', req.body.params);
     console.log('>> Exchange', exchange);
 
     let p;
@@ -47,22 +42,24 @@ router.post('/', (req, res, next) => {
     switch (req.body.method) {
         case 'getSymbols':
             p = exchange.get_symbols()
-                .then(symbols => database.set('symbols', symbols));
+                .then(symbols => db.set('symbols', filter, symbols))
+                .then(() => db.set('settings', null, params));
             break;
 
         case 'getCandles':
             p = exchange.get_candles(params)
-                .then(candles => database.set('candles', candles));
+                .then(candles => db.set('candles', filter, candles))
+                .then(() => db.set('settings', null, params));
             break;
 
         case 'resetSettings':
-            p = database.set('settings', params)
-                .then(() => database.set('candles', {}))
-                .then(() => database.set('symbols', defaults.symbols));
+            p = db.delete('settings')
+                .then(() => db.delete('candles', filter))
+                .then(() => db.delete('symbols', filter));
             break;
 
         case 'saveSettings':
-            p = database.set('settings', params);
+            p = db.set('settings', null, params);
             break;
 
         default:

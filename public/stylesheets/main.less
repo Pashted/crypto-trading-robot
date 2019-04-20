@@ -1,7 +1,7 @@
 @import (inline) "../../node_modules/chosenjs/chosen.css";
 @import "../../node_modules/uikit/src/less/uikit.theme.less";
 
-// TODO: add local font-face
+@import 'https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i|Roboto+Condensed:300,400&amp;subset=cyrillic';
 
 @global-font-family: "Open Sans", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 @base-heading-font-family: "Roboto Condensed", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -12,6 +12,7 @@
 @icon-button-size: 40px;
 
 @form-legend-line-height: @text-lead-line-height;
+
 
 @nav-default-font-size: 1.15rem;
 
@@ -62,13 +63,16 @@
 }
 
 aside {
+    background: @global-background;
+    box-shadow: -9000px 0 0 9000px @global-background;
     [uk-icon] {
         margin:         4px 5px 0 0;
         vertical-align: top;
     }
 }
 
-.uk-notification-message {
+.hook-notification-message {
+    font-weight: 600;
     > div {
         [uk-icon] {
             vertical-align: top;

@@ -15,8 +15,9 @@ module.exports = {
             request.get(
                 this.url + '/conf/pub:list:pair:exchange',
                 (error, response, body) => {
+                    if (error) throw error;
 
-                    let symbols = {},
+                    let data = {},
                         result = JSON.parse(body);
 
                     console.log('>> EX SYMBOLS result', result);
@@ -29,14 +30,19 @@ module.exports = {
                         let cur = symbol.substr(0, 3), // first currency in pair
                             pair = symbol.substr(3); // second currency in pair
 
-                        if (!symbols[cur]) // if found currency 1st time
-                            symbols[cur] = [pair];
+                        if (!data[cur]) // if found currency 1st time
+                            data[cur] = [pair];
 
-                        else if (!symbols[cur].includes(pair)) // if found pair 1st time
-                            symbols[cur].push(pair);
+                        else if (!data[cur].includes(pair)) // if found pair 1st time
+                            data[cur].push(pair);
                     });
 
-                    resolve(symbols);
+                    resolve({
+                        params: {
+                            exchange: 'bitfinex'
+                        },
+                        data
+                    });
                 }
             );
         });
@@ -55,14 +61,15 @@ module.exports = {
             request.get(
                 this.url + `/candles/trade:${params.timeframe}:t${params.selectedPair}/hist`,
                 (error, response, body) => {
+                    if (error) throw error;
 
-                    let candles = [],
+                    let data = [],
                         result = JSON.parse(body);
 
                     console.log(`>> EX ${params.selectedPair} CANDLES result`, result);
 
                     result.forEach(candle => {
-                        candles.push({
+                        data.push({
                             timestamp: candle[0],
                             OPEN:      candle[1],
                             CLOSE:     candle[2],
@@ -72,7 +79,7 @@ module.exports = {
                         });
                     });
 
-                    resolve({ params, candles });
+                    resolve({ params, data });
                 }
             );
 

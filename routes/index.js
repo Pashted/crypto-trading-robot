@@ -1,23 +1,17 @@
 const express = require('express'),
     router = express.Router(),
-    database = require('../model/database/mongodb')(),
-    defaults = require('../model/defaults'),
-
+    get_settings = require('../model/settings'),
     fs = require('fs');
 
+router.get('/', async (req, res, next) => {
 
-router.get('/', (req, res, next) =>
+        res.render('index', {
+            title:       'Crypto Trading Robot',
+            description: 'Welcome to the app',
+            settings:    await get_settings()
+        });
 
-    database.get('settings', defaults.settings)
-
-        .then(settings => {
-
-            res.render('index', {
-                title:       'Crypto Trading Robot',
-                description: 'Welcome to the app',
-                settings, defaults
-            })
-        })
+    }
 );
 
 router.get('/jquery.js', (req, res, next) =>
