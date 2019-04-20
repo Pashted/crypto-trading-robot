@@ -1,5 +1,10 @@
+require('../main');
+
 (function ($) {
+
     $(document).ready(function () {
+
+        console.log('>> RUN_ settings.js');
 
         let form = $('.settings-form'),
 
@@ -11,7 +16,7 @@
             last_pair = pairs.data('value'),
 
             section_icon = $('aside .uk-active [uk-icon]').attr('uk-icon'),
-            note_timeout = 1000 * 2,
+            note_timeout = 3,
             note_style = 'success';
 
         syms.on({
@@ -194,6 +199,6 @@
             });
         });
 
-
     });
+
 })(jQuery);
