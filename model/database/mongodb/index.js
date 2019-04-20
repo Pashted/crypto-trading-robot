@@ -90,4 +90,36 @@ module.exports = {
         );
     },
 
+    /**
+     *
+     * @param collectionName
+     * @param filter
+     * @returns {Promise}
+     */
+    async delete(collectionName, filter) {
+
+        await this.connect;
+
+        return new Promise(resolve => {
+
+                let collection = client.db(dbName).collection(collectionName);
+
+                collection.deleteOne(
+                    filter || {},
+                    (err, result) => {
+
+                        if (err) throw err;
+
+                        // console.log(`>> REPLACE ${collectionName} results`, result.ops);
+
+                        let status = err ? 'error' : 'success';
+
+                        resolve(JSON.stringify({ status }))
+
+                    }
+                );
+            }
+        );
+    }
+
 };
