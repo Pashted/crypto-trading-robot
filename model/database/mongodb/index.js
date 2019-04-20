@@ -24,10 +24,10 @@ module.exports = {
     /**
      * @description Gets data from DB collection
      * @param collectionName
-     * @param _default
+     * @param filter
      * @returns {Promise}
      */
-    async get(collectionName, _default) {
+    async get(collectionName, filter) {
 
         await this.connect;
 
@@ -36,7 +36,7 @@ module.exports = {
                 try {
                     let collection = client.db(dbName).collection(collectionName);
 
-                    collection.find()
+                    collection.find(filter || {})
                         .toArray((err, results) => {
                             if (err) reject(err);
 
@@ -62,10 +62,11 @@ module.exports = {
     /**
      * @description Replaces DB collection with the new one
      * @param collectionName
+     * @param filter
      * @param data
      * @returns {Promise}
      */
-    async set(collectionName, data) {
+    async set(collectionName, filter, data) {
 
         await this.connect;
 
@@ -74,11 +75,14 @@ module.exports = {
                 let collection = client.db(dbName).collection(collectionName);
 
                 collection.replaceOne(
-                    {}, data, { upsert: true }, (err, result) => {
+                    filter || {},
+                    data,
+                    { upsert: true },
+                    (err, result) => {
 
                         if (err) throw err;
 
-                        console.log(`>> REPLACE ${collectionName} results`, result.ops);
+                        // console.log(`>> REPLACE ${collectionName} results`, result.ops);
 
                         let status = err ? 'error' : 'success';
 
