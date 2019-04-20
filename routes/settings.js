@@ -25,7 +25,9 @@ router.post('/', async (req, res, next) => {
 
     const settings = await get_settings(),
 
-        params = req.body.params ? JSON.parse(req.body.params) : settings.user.__proto__,
+        params = req.body.params
+                 ? JSON.parse(req.body.params)
+                 : settings.user,
 
         exchange = require('./../model/exchange/' + params.exchange),
         filter = {
@@ -40,12 +42,14 @@ router.post('/', async (req, res, next) => {
     switch (req.body.method) {
         case 'getSymbols':
             p = exchange.get_symbols()
-                .then(symbols => db.set('symbols', filter, symbols));
+                .then(symbols => db.set('symbols', filter, symbols))
+                .then(() => db.set('settings', null, params));
             break;
 
         case 'getCandles':
             p = exchange.get_candles(params)
-                .then(candles => db.set('candles', filter, candles));
+                .then(candles => db.set('candles', filter, candles))
+                .then(() => db.set('settings', null, params));
             break;
 
         case 'resetSettings':
