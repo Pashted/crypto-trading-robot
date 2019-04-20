@@ -24,8 +24,13 @@ router.post('/', async (req, res, next) => {
     console.log('>> INCOMING POST REQUEST:', req.body);
 
     const settings = await get_settings(),
+
         params = req.body.params ? JSON.parse(req.body.params) : settings.user.__proto__,
+
         exchange = ex[params.exchange];
+        filter = {
+            'params.exchange': params.exchange
+        };
 
     console.log('>> POST PARAMS', req.body.params);
     console.log('>> Exchange', exchange);
@@ -35,22 +40,22 @@ router.post('/', async (req, res, next) => {
     switch (req.body.method) {
         case 'getSymbols':
             p = exchange.get_symbols()
-                .then(symbols => db.set('symbols', symbols));
+                .then(symbols => db.set('symbols', filter, symbols));
             break;
 
         case 'getCandles':
             p = exchange.get_candles(params)
-                .then(candles => db.set('candles', candles));
+                .then(candles => db.set('candles', filter, candles));
             break;
 
         case 'resetSettings':
-            p = db.set('settings', {})
-                .then(() => db.set('candles', {}))
-                .then(() => db.set('symbols', {}));
+            p = db.delete('settings')
+                .then(() => db.delete('candles', filter))
+                .then(() => db.delete('symbols', filter));
             break;
 
         case 'saveSettings':
-            p = db.set('settings', params);
+            p = db.set('settings', null, params);
             break;
 
         default:
