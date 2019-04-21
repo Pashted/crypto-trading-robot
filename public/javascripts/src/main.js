@@ -40,6 +40,18 @@ let initMain = async function () {
 
     };
 
+
+    let nav_links = $('aside .uk-nav > li > a');
+
+    nav_links.on({
+        click: function (e) {
+            let $this = $(this);
+
+            nav_links.not($this).parent().removeClass('uk-active uk-open');
+            $this.parent().addClass('uk-active uk-open');
+        }
+    })
+
 };
 
 export { initMain };
