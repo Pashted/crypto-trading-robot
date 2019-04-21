@@ -2,6 +2,8 @@ import { initMain } from '../main';
 
 import { serializeJSON as serialize } from '../modules/serializeJSON';
 
+import { initChart } from '../modules/chart';
+
 initMain().then(() => {
 
     console.log('>> RUN_ settings.js');
@@ -216,5 +218,12 @@ initMain().then(() => {
             },
         });
     });
+
+    form.find('.uk-accordion').on({
+        shown: function () {
+            $(this).attr('uk-accordion', 'collapsible:false').find('.uk-accordion-title').remove();
+            initChart();
+        }
+    })
 
 });
