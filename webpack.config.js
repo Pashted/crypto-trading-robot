@@ -11,12 +11,12 @@ module.exports = {
         settings: './settings.js',
         help:     './help.js',
     },
-    resolve: {
+    resolve:      {
         alias: {
             'uikit-icons': path.resolve('./node_modules/uikit/dist/js/uikit-icons'),
         }
     },
-    plugins: [
+    plugins:      [
         new webpack.ProvidePlugin({
             $:               'jquery',
             jQuery:          'jquery',
@@ -26,8 +26,14 @@ module.exports = {
             UIkit: 'uikit'
         })
     ],
-    output:  {
-        path:     path.resolve('./public/javascripts/dist'),
-        filename: "[name].js"
+    output:       {
+        path:          path.resolve('./public/javascripts/dist'),
+        filename:      "[name].js",
+        chunkFilename: 'bundle.js',
+    },
+    optimization: {
+        splitChunks: {
+            chunks: 'all'
+        }
     }
 };
