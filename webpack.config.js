@@ -25,7 +25,8 @@ module.exports = {
             "window.jQuery": 'jquery'
         }),
         new webpack.ProvidePlugin({
-            UIkit: 'uikit'
+            UIkit:          'uikit',
+            "window.UIkit": 'uikit'
         })
     ],
     output:       {
