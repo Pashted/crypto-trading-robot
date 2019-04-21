@@ -25,17 +25,23 @@ module.exports = {
             "window.jQuery": 'jquery'
         }),
         new webpack.ProvidePlugin({
-            UIkit: 'uikit'
+            UIkit:          'uikit',
+            "window.UIkit": 'uikit'
         })
     ],
     output:       {
-        path:          path.resolve('./public/javascripts/dist'),
-        filename:      "[name].js",
-        chunkFilename: 'bundle.js',
+        path: path.resolve('./public/javascripts/dist')
     },
     optimization: {
         splitChunks: {
-            chunks: 'all'
+            cacheGroups: {
+                bundle: {
+                    chunks:  'initial',
+                    name:    'bundle',
+                    test:    /node_modules/,
+                    enforce: true
+                }
+            }
         }
     }
 };
