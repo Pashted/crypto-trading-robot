@@ -1,5 +1,7 @@
 require('../main');
 
+// require('../charts');
+
 (function ($) {
 
     $(document).ready(function () {
