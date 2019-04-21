@@ -1,7 +1,6 @@
-let icons = require('uikit-icons');
-icons(UIkit);
-
 require('chosenjs');
+require('uikit-icons');
+
 
 (function ($) {
     $(document).ready(function () {
