@@ -8,6 +8,7 @@ router.get('/', async (req, res, next) => {
         res.render('home/index', {
             title:       'Crypto Trading Robot',
             description: 'Welcome to the app',
+            section:     'home',
             settings:    await get_settings()
         });
 
