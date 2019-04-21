@@ -8,7 +8,25 @@ import { serializeJSON as serialize } from '../modules/serializeJSON';
 
         console.log('>> RUN_ settings.js');
 
-        let form = $('.settings-form'),
+    // show password
+    $('input[type="password"]').siblings('a').on({
+        click: function () {
+
+            let link = $(this),
+                input = link.siblings('input'),
+                locked = input.attr('type') === 'password',
+
+                icon = locked ? 'unlock' : 'lock',
+                tooltip = (locked ? 'Hide' : 'Show') + link.attr('uk-tooltip').replace(/^.*?(\s.*)$/, '$1');
+
+            link.attr('uk-icon', icon);
+            link.attr('uk-tooltip', tooltip);
+
+            input.attr('type', locked ? 'text' : 'password');
+        }
+    });
+
+    let form = $('.settings-form'),
 
             syms = form.find('#symbol'),
             pairs = form.find('#pair'),
