@@ -1,5 +1,7 @@
 require('../main');
 
+import { serializeJSON as serialize } from '../modules/serializeJSON';
+
 (function ($) {
 
     $(document).ready(function () {
@@ -77,11 +79,11 @@ require('../main');
 
         form.find('button.save').click(function () {
 
-            let btn = form.find('button[type="submit"]'),
-                data = {
-                    method: 'saveSettings',
-                    params: form.serializeJSON()
-                };
+        let btn = form.find('button[type="submit"]'),
+            data = {
+                method: 'saveSettings',
+                params: serialize(form)
+            };
 
             btn.attr('disabled', true);
 
@@ -142,10 +144,10 @@ require('../main');
 
             $(this).attr('disabled', true);
 
-            let data = {
-                method: 'getSymbols',
-                params: form.serializeJSON()
-            };
+        let data = {
+            method: 'getSymbols',
+            params: serialize(form)
+        };
 
             $.ajax({
                 url:      form.attr('action'),
@@ -173,10 +175,10 @@ require('../main');
 
             $(this).attr('disabled', true);
 
-            let data = {
-                method: 'getCandles',
-                params: form.serializeJSON()
-            };
+        let data = {
+            method: 'getCandles',
+            params: serialize(form)
+        };
 
             $.ajax({
                 url:      form.attr('action'),

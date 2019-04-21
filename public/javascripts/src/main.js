@@ -6,32 +6,6 @@ require('uikit-icons');
     $(document).ready(function () {
         console.log('>> RUN_ main.js');
 
-        $.fn.serializeJSON = function () {
-            let result = {};
-
-            this.serialize()
-                .split('&')
-                .forEach(value => {
-                    let arr = value.split('=');
-
-                    switch (typeof result[arr[0]]) {
-                        case 'string':
-                            result[arr[0]] = [result[arr[0]], arr[1]];
-                            break;
-
-                        case 'object':
-                            result[arr[0]].push(arr[1]);
-                            break;
-
-                        default:
-                            result[arr[0]] = arr[1];
-                    }
-
-                });
-
-            return JSON.stringify(result);
-        };
-
 
         $('select').chosen({
             disable_search_threshold: 12
