@@ -1,2 +1,2 @@
-node ./bin/www
+npm run start
 pause
