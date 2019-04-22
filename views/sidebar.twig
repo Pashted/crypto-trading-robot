@@ -2,8 +2,8 @@
 
     <ul class="uk-nav uk-nav-default uk-nav-parent-icon">
 
-        <li class="{{ section ?: 'uk-active' }}">
-            <a href="/"><span uk-icon="home"></span> Mainpage</a>
+        <li class="{{ section == 'home' ? 'uk-active' }}">
+            <a href="/"><span uk-icon="home"></span> Homepage</a>
         </li>
 
         <li class="uk-parent {{ section == 'trading' ? 'uk-active  uk-open' }}">
