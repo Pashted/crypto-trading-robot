@@ -9,7 +9,6 @@ Based on Node.js, MongoDb and ES6.
 2. Install [MongoDB Community Server](https://www.mongodb.com/download-center/community).
 3. Start MongoDB as service or any other way. It must be available from default address `http://localhost:27017/`.
 4. Download or clone this repository.
-5. At first run execute `build.cmd` from the root folder and wait for completion of operation.
-6. Execute `start.cmd` now and next time for starting the app.
-7. Open `http://localhost:3000/` in your browser.
-8. Stay tuned =)
+5. Execute `start.cmd` now and next time for starting the app. At first run it will start installation process - wait for completion of operation.
+6. Open `http://localhost:3000/` in your browser.
+7. Stay tuned =)
