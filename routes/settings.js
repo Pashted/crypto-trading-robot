@@ -37,18 +37,24 @@ router.post('/', async (req, res, next) => {
     console.log('>> POST PARAMS', req.body.params);
     console.log('>> Exchange', exchange);
 
-    let p;
+    let p, message = {};
 
     switch (req.body.method) {
         case 'getSymbols':
             p = exchange.get_symbols()
-                .then(symbols => db.set('symbols', filter, symbols))
+                .then(symbols => {
+                    message = symbols;
+                    return db.set('symbols', filter, symbols);
+                })
                 .then(() => db.set('settings', null, params));
             break;
 
         case 'getCandles':
             p = exchange.get_candles(params)
-                .then(candles => db.set('candles', filter, candles))
+                .then(candles => {
+                    message = candles;
+                    return db.set('candles', filter, candles);
+                })
                 .then(() => db.set('settings', null, params));
             break;
 
@@ -58,7 +64,7 @@ router.post('/', async (req, res, next) => {
                 .then(() => db.delete('symbols', filter));
             break;
 
-        case 'saveSettings':
+        case 'setSettings':
             p = db.set('settings', null, params);
             break;
 
@@ -66,7 +72,7 @@ router.post('/', async (req, res, next) => {
             p = Promise.resolve('Empty response');
     }
 
-    p.then(status => res.send(status));
+    p.then(() => res.send(message));
 
 
 });
