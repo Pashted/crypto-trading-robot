@@ -1,6 +1,6 @@
 const express = require('express'),
     router = express.Router(),
-    ex = require('../model/exchange'), // exchange module factory
+    exchanges = require('../model/exchange'), // list of available exchange models
     db = require('../model/database/mongodb'),
     get_settings = require('../model/settings');
 
@@ -10,11 +10,11 @@ const express = require('express'),
 router.get('/', async (req, res, next) => {
 
     res.render('settings/index', {
-        section:   'settings',
-        title:     'Settings section',
-        tab:       (req.query.tab || 1) - 1,
-        exchanges: ex._list,
-        settings:  await get_settings()
+        section:  'settings',
+        title:    'Settings section',
+        tab:      (req.query.tab || 1) - 1,
+        settings: await get_settings(),
+        exchanges
     });
 
 });
@@ -23,11 +23,19 @@ router.post('/', async (req, res, next) => {
 
     console.log('>> INCOMING POST REQUEST:', req.body);
 
-    const settings = await get_settings(),
+    const _settings = await get_settings();
+    let params;
 
-        params = req.body.params ? JSON.parse(req.body.params) : settings.user.__proto__,
+    if (req.body.params) {
+        params = JSON.parse(req.body.params);
+        params.__proto__ = _settings.user;
 
-        exchange = ex[params.exchange];
+    } else {
+        params = _settings.user;
+    }
+
+
+    let exchange = require('./../model/exchange/' + params.exchange),
         filter = {
             'params.exchange': params.exchange
         };
@@ -35,17 +43,25 @@ router.post('/', async (req, res, next) => {
     console.log('>> POST PARAMS', req.body.params);
     console.log('>> Exchange', exchange);
 
-    let p;
+    let p, message = {};
 
     switch (req.body.method) {
         case 'getSymbols':
             p = exchange.get_symbols()
-                .then(symbols => db.set('symbols', filter, symbols));
+                .then(symbols => {
+                    message = symbols;
+                    return db.set('symbols', filter, symbols);
+                })
+                .then(() => db.set('settings', null, params));
             break;
 
         case 'getCandles':
             p = exchange.get_candles(params)
-                .then(candles => db.set('candles', filter, candles));
+                .then(candles => {
+                    message = candles;
+                    return db.set('candles', filter, candles);
+                })
+                .then(() => db.set('settings', null, params));
             break;
 
         case 'resetSettings':
@@ -54,7 +70,7 @@ router.post('/', async (req, res, next) => {
                 .then(() => db.delete('symbols', filter));
             break;
 
-        case 'saveSettings':
+        case 'setSettings':
             p = db.set('settings', null, params);
             break;
 
@@ -62,7 +78,7 @@ router.post('/', async (req, res, next) => {
             p = Promise.resolve('Empty response');
     }
 
-    p.then(status => res.send(status));
+    p.then(() => res.send(message));
 
 
 });

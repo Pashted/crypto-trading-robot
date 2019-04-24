@@ -1,7 +1,6 @@
 @import (inline) "../../node_modules/chosenjs/chosen.css";
 @import "../../node_modules/uikit/src/less/uikit.theme.less";
-
-// TODO: add local font-face
+@import 'https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i|Roboto+Condensed:300,400&amp;subset=cyrillic';
 
 @global-font-family: "Open Sans", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 @base-heading-font-family: "Roboto Condensed", "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -96,4 +95,9 @@ aside {
     .chosen-results {
         max-height: 300px;
     }
+}
+
+#chart {
+    width:  100%;
+    height: 600px;
 }
