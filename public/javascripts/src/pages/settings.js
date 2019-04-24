@@ -48,10 +48,11 @@ initMain().then(() => {
         let btn = $(this);
         btn.attr('disabled', true);
 
-        let response = await Settings.reset('Settings').catch(err => console.log(err));
+        await Settings.reset('Settings').catch(err => console.log(err));
+        window.location.reload();
 
-        Warning('Settings reset complete!');
-        btn.removeAttr('disabled');
+        // Warning('Settings reset complete!');
+        // btn.removeAttr('disabled');
     });
 
 
