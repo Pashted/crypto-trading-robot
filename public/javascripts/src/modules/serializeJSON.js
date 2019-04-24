@@ -1,14 +1,13 @@
 /**
- * Making object form a jQuery form element
- * @param form
+ * Making object form a query string
+ * @param data
  * @returns {string}
  */
 
-export let serializeJSON = function (form) {
+export let serializeJSON = function (data) {
     let result = {};
 
-    form.serialize()
-        .split('&')
+    data.split('&')
         .forEach(value => {
             let arr = value.split('=');
 
