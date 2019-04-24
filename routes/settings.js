@@ -23,13 +23,19 @@ router.post('/', async (req, res, next) => {
 
     console.log('>> INCOMING POST REQUEST:', req.body);
 
-    const settings = await get_settings(),
+    const _settings = await get_settings();
+    let params;
 
-        params = req.body.params
-                 ? JSON.parse(req.body.params)
-                 : settings.user,
+    if (req.body.params) {
+        params = JSON.parse(req.body.params);
+        params.__proto__ = _settings.user;
 
-        exchange = require('./../model/exchange/' + params.exchange),
+    } else {
+        params = _settings.user;
+    }
+
+
+    let exchange = require('./../model/exchange/' + params.exchange),
         filter = {
             'params.exchange': params.exchange
         };
