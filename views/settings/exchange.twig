@@ -123,13 +123,14 @@
             <li>
                 <a class="uk-accordion-title" href="#">Show candles</a>
                 <div class="uk-accordion-content">
-                    <pre>{{ settings.candles }}</pre>
+
+                    {% embed "../chart.twig" %}{% endembed %}
+
                 </div>
             </li>
         </ul>
 
-        {% embed "../charts.twig" %}{% endembed %}
-
     {% endif %}
+
 
 </div>
