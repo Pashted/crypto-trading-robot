@@ -64,7 +64,7 @@ initMain().then(() => {
 
         console.log('> getSymbols RESULT', response);
 
-        Symbols.change(response.data);
+        Symbols.change(response);
 
         Message('Symbols updated');
         btn.removeAttr('disabled');

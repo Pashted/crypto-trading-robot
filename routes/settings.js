@@ -49,7 +49,7 @@ router.post('/', async (req, res, next) => {
         case 'getSymbols':
             p = exchange.get_symbols()
                 .then(symbols => {
-                    message = symbols;
+                    message = symbols.data;
                     return db.set('symbols', filter, symbols);
                 })
                 .then(() => db.set('settings', null, params));
@@ -58,7 +58,7 @@ router.post('/', async (req, res, next) => {
         case 'getCandles':
             p = exchange.get_candles(params)
                 .then(candles => {
-                    message = candles;
+                    message = candles.data;
                     return db.set('candles', filter, candles);
                 })
                 .then(() => db.set('settings', null, params));
