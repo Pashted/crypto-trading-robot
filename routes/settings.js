@@ -23,13 +23,19 @@ router.post('/', async (req, res, next) => {
 
     console.log('>> INCOMING POST REQUEST:', req.body);
 
-    const settings = await get_settings(),
+    const _settings = await get_settings();
+    let params;
 
-        params = req.body.params
-                 ? JSON.parse(req.body.params)
-                 : settings.user,
+    if (req.body.params) {
+        params = JSON.parse(req.body.params);
+        params.__proto__ = _settings.user;
 
-        exchange = require('./../model/exchange/' + params.exchange),
+    } else {
+        params = _settings.user;
+    }
+
+
+    let exchange = require('./../model/exchange/' + params.exchange),
         filter = {
             'params.exchange': params.exchange
         };
@@ -43,7 +49,7 @@ router.post('/', async (req, res, next) => {
         case 'getSymbols':
             p = exchange.get_symbols()
                 .then(symbols => {
-                    message = symbols;
+                    message = symbols.data;
                     return db.set('symbols', filter, symbols);
                 })
                 .then(() => db.set('settings', null, params));
@@ -52,7 +58,7 @@ router.post('/', async (req, res, next) => {
         case 'getCandles':
             p = exchange.get_candles(params)
                 .then(candles => {
-                    message = candles;
+                    message = candles.data;
                     return db.set('candles', filter, candles);
                 })
                 .then(() => db.set('settings', null, params));

@@ -1,8 +1,10 @@
 import { initMain } from '../main';
 
-import * as Symbols from '../modules/exchangeSettings';
-import * as Settings from '../modules/transportLayer';
 import { Message, Warning, Error } from '../modules/notify';
+import { Symbols } from "../modules/exchangeSettings";
+import * as Settings from '../modules/transportLayer';
+
+import { initChart } from '../modules/chart';
 
 initMain().then(() => {
 
@@ -46,10 +48,11 @@ initMain().then(() => {
         let btn = $(this);
         btn.attr('disabled', true);
 
-        let response = await Settings.reset('Settings').catch(err => console.log(err));
+        await Settings.reset('Settings').catch(err => console.log(err));
+        window.location.reload();
 
-        Warning('Settings reset complete!');
-        btn.removeAttr('disabled');
+        // Warning('Settings reset complete!');
+        // btn.removeAttr('disabled');
     });
 
 
@@ -58,6 +61,10 @@ initMain().then(() => {
         btn.attr('disabled', true);
 
         let response = await Settings.get('Symbols').catch(err => console.log(err));
+
+        console.log('> getSymbols RESULT', response);
+
+        Symbols.change(response);
 
         Message('Symbols updated');
         btn.removeAttr('disabled');
@@ -73,5 +80,12 @@ initMain().then(() => {
         Message('Candles updated');
         btn.removeAttr('disabled');
     });
+
+    form.find('.uk-accordion').on({
+        shown: function () {
+            $(this).attr('uk-accordion', 'collapsible:false').find('.uk-accordion-title').remove();
+            initChart();
+        }
+    })
 
 });
