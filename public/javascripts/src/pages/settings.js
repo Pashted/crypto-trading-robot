@@ -1,8 +1,8 @@
 import { initMain } from '../main';
 
-import * as Symbols from '../modules/exchangeSettings';
-import * as Settings from '../modules/transportLayer';
 import { Message, Warning, Error } from '../modules/notify';
+import { Symbols } from "../modules/exchangeSettings";
+import * as Settings from '../modules/transportLayer';
 
 import { initChart } from '../modules/chart';
 
@@ -60,6 +60,10 @@ initMain().then(() => {
         btn.attr('disabled', true);
 
         let response = await Settings.get('Symbols').catch(err => console.log(err));
+
+        console.log('> getSymbols RESULT', response);
+
+        Symbols.change(response.data);
 
         Message('Symbols updated');
         btn.removeAttr('disabled');
