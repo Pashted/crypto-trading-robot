@@ -24,40 +24,55 @@ router.post('/', async (req, res, next) => {
     console.log('>> INCOMING POST REQUEST:', req.body);
 
     const settings = await get_settings(),
-        params = req.body.params ? JSON.parse(req.body.params) : settings.user.__proto__,
-        exchange = require('./../model/exchange/' + params.exchange);
+
+        params = req.body.params
+                 ? JSON.parse(req.body.params)
+                 : settings.user,
+
+        exchange = require('./../model/exchange/' + params.exchange),
+        filter = {
+            'params.exchange': params.exchange
+        };
 
     console.log('>> POST PARAMS', req.body.params);
     console.log('>> Exchange', exchange);
 
-    let p;
+    let p, message = {};
 
     switch (req.body.method) {
         case 'getSymbols':
             p = exchange.get_symbols()
-                .then(symbols => db.set('symbols', symbols));
+                .then(symbols => {
+                    message = symbols;
+                    return db.set('symbols', filter, symbols);
+                })
+                .then(() => db.set('settings', null, params));
             break;
 
         case 'getCandles':
             p = exchange.get_candles(params)
-                .then(candles => db.set('candles', candles));
+                .then(candles => {
+                    message = candles;
+                    return db.set('candles', filter, candles);
+                })
+                .then(() => db.set('settings', null, params));
             break;
 
         case 'resetSettings':
-            p = db.set('settings', {})
-                .then(() => db.set('candles', {}))
-                .then(() => db.set('symbols', {}));
+            p = db.delete('settings')
+                .then(() => db.delete('candles', filter))
+                .then(() => db.delete('symbols', filter));
             break;
 
-        case 'saveSettings':
-            p = db.set('settings', params);
+        case 'setSettings':
+            p = db.set('settings', null, params);
             break;
 
         default:
             p = Promise.resolve('Empty response');
     }
 
-    p.then(status => res.send(status));
+    p.then(() => res.send(message));
 
 
 });
