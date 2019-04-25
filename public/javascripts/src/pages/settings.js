@@ -1,14 +1,16 @@
 import { initMain } from '../main';
 
 import { Message, Warning, Error } from '../modules/notify';
-import { Symbols } from "../modules/exchangeSettings";
 import * as Settings from '../modules/transportLayer';
-
-import { initChart } from '../modules/chart';
+import * as Accordion from '../modules/accordion';
+import * as Symbols from "../modules/settings/symbols";
+import * as Chart from '../modules/chart';
 
 initMain().then(() => {
 
     console.log('>> RUN_ settings.js');
+
+    Accordion.init();
 
     // show password
     $('input[type="password"]').siblings('a').on({
