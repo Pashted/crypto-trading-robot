@@ -59,10 +59,10 @@
                     data-default="{{ settings.user.__proto__.pair }}">
             </select>
 
-            {#<button type="button" class="update uk-icon-button" uk-icon="refresh" uk-tooltip="Get symbols from exchange and save them to the local database"></button>#}
-            <button type="button" class="getSymbols uk-button uk-button-small uk-button-secondary" uk-tooltip="Get symbols from exchange and save them to the local database">
+            <button type="button" class="getSymbols uk-icon-button" uk-icon="refresh" uk-tooltip="Get symbols from exchange and save them to the local database"></button>
+            {#<button type="button" class="getSymbols uk-button uk-button-small uk-button-secondary" uk-tooltip="Get symbols from exchange and save them to the local database">
                 Update symbols
-            </button>
+            </button>#}
 
         </div>
     </div>
@@ -113,9 +113,16 @@
 
 
     <p>
-        <button type="button" class="getCandles uk-button uk-button-small uk-button-secondary" uk-tooltip="Get candles from exchange and save them to the local database">
-            Get candles
+        <button type="button" class="getCandles uk-button uk-button-small uk-button-secondary"
+                uk-tooltip="Get candles from exchange with selected parameters and save them to the local database">
+            <i uk-icon="icon:download"></i> Import
         </button>
+
+        {% if settings.candles %}
+            <button type="button" class="showCandles uk-button uk-button-small uk-button-secondary" uk-tooltip="Shows last saved data in chart">
+                <i uk-icon="icon:folder"></i> Show saved
+            </button>
+        {% endif %}
     </p>
 
     {% if settings.candles|length > 2 %}
