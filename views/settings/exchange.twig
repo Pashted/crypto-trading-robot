@@ -118,19 +118,24 @@
         </button>
     </p>
 
-    {% if settings.candles|length > 2 %}
-        <ul uk-accordion>
+
+    <ul uk-accordion="animation:false">
+        <li>
+            <a class="uk-accordion-title" href="#">Candlestick chart</a>
+            <div class="uk-accordion-content">
+                <div id="chart"></div>
+            </div>
+        </li>
+
+        {% if settings.candles %}
             <li>
-                <a class="uk-accordion-title" href="#">Show candles</a>
+                <a class="uk-accordion-title" href="#">Raw data</a>
                 <div class="uk-accordion-content">
-
-                    {% embed "../chart.twig" %}{% endembed %}
-
+                    <pre>{{ settings.candles }}</pre>
                 </div>
             </li>
-        </ul>
-
-    {% endif %}
+        {% endif %}
+    </ul>
 
 
 </div>
