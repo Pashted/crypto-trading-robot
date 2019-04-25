@@ -1,11 +1,10 @@
 import { initMain } from '../main';
 
 import { Message, Warning, Error } from '../modules/notify';
-import { Symbols } from "../modules/exchangeSettings";
 import * as Settings from '../modules/transportLayer';
 import * as Accordion from '../modules/accordion';
-
-import { initChart } from '../modules/chart';
+import * as Symbols from "../modules/settings/symbols";
+import * as Chart from '../modules/chart';
 
 initMain().then(() => {
 
