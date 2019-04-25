@@ -2,19 +2,25 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 
 
-let initChart = () => {
-    let obj = $('#chart');
+let init = (data) => {
 
-    if (!obj.length)
-        return false;
+    let form = $('section form'),
+        obj = form.find('#chart'),
+        accord = form.find('.uk-accordion');
 
-    let style = obj.data('style') === 'dark' ? 'dark' : 'material',
-        theme = require(`@amcharts/amcharts4/themes/${style}.js`);
+    if (accord.length && !accord.find('li').eq(0).hasClass('uk-open'))
+        UIkit.accordion(accord).toggle(0);
 
-    console.log(style);
+    $('<div id="chart"></div>').insertAfter(obj);
+
+    obj.remove();
+
 
     /* Chart code */
 // Themes begin
+    let style = $('body').data('theme') === 'dark' ? 'dark' : 'material',
+        theme = require(`@amcharts/amcharts4/themes/${style}.js`);
+
     am4core.useTheme(theme.default);
 // Themes end
 
@@ -384,4 +390,4 @@ let initChart = () => {
 
 };
 
-export { initChart };
+export { init };

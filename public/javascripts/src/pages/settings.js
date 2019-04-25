@@ -77,15 +77,12 @@ initMain().then(() => {
 
         let response = await Settings.get('Candles').catch(err => console.log(err));
 
+        Chart.init(response);
+
         Message('Candles updated');
         btn.removeAttr('disabled');
     });
 
-    form.find('.uk-accordion').on({
-        shown: function () {
-            $(this).attr('uk-accordion', 'collapsible:false').find('.uk-accordion-title').remove();
-            initChart();
-        }
-    })
+    form.find('.showCandles').click(() => Chart.init())
 
 });
