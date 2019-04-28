@@ -2,16 +2,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 
 
-let init = (data) => {
-
-    let form = $('section form'),
-        obj = form.find('#chart'),
-        accord = form.find('.uk-accordion');
-
-    if (accord.length && !accord.find('li').eq(0).hasClass('uk-open'))
-        UIkit.accordion(accord).toggle(0);
-
-    $('<div id="chart"></div>').insertAfter(obj);
+let init = data => {
 
     obj.remove();
 
