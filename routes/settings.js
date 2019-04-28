@@ -21,6 +21,8 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
 
+    // TODO handle errors in promises
+
     console.log('>> INCOMING POST REQUEST:', req.body);
 
     const _settings = await get_settings();
@@ -29,6 +31,8 @@ router.post('/', async (req, res, next) => {
     if (req.body.params) {
         params = JSON.parse(req.body.params);
         params.__proto__ = _settings.user;
+
+        await db.set('settings', null, params);
 
     } else {
         params = _settings.user;
@@ -43,42 +47,56 @@ router.post('/', async (req, res, next) => {
     console.log('>> POST PARAMS', req.body.params);
     console.log('>> Exchange', exchange);
 
-    let p, message = {};
+    let message = { status: "Empty response" };
 
     switch (req.body.method) {
-        case 'getSymbols':
-            p = exchange.get_symbols()
-                .then(symbols => {
-                    message = symbols;
-                    return db.set('symbols', filter, symbols);
-                })
-                .then(() => db.set('settings', null, params));
+        case 'importSymbols':
+
+            let symbols = await exchange.get_symbols(); // get symbols from exchange
+            message = symbols.data || null;
+
+            await db.set('symbols', filter, symbols); // save new symbols to db
+
+            break;
+
+        case 'importCandles':
+
+            let ex_candles = await exchange.get_candles(params); // get candles from exchange
+            message = ex_candles.data || null;
+
+            await db.set('candles', filter, ex_candles); // save new candles to db
+
             break;
 
         case 'getCandles':
-            p = exchange.get_candles(params)
-                .then(candles => {
-                    message = candles;
-                    return db.set('candles', filter, candles);
-                })
-                .then(() => db.set('settings', null, params));
+
+            let db_candles = await db.get('candles', filter);
+
+            message = db_candles.data ? db_candles : null;
+
+
+            break;
+
+        case 'saveSettings':
+            // TODO: separate secondary settings parameters for each exchange
+
+            await db.set('settings', null, params);
+
             break;
 
         case 'resetSettings':
-            p = db.delete('settings')
-                .then(() => db.delete('candles', filter))
-                .then(() => db.delete('symbols', filter));
+
+            await Promise.all([
+                db.delete('settings'),
+                db.delete('candles', filter),
+                db.delete('symbols', filter)
+            ]);
+
             break;
 
-        case 'setSettings':
-            p = db.set('settings', null, params);
-            break;
-
-        default:
-            p = Promise.resolve('Empty response');
     }
 
-    p.then(() => res.send(message));
+    res.send(message);
 
 
 });

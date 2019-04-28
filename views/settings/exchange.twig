@@ -59,10 +59,7 @@
                     data-default="{{ settings.user.__proto__.pair }}">
             </select>
 
-            {#<button type="button" class="update uk-icon-button" uk-icon="refresh" uk-tooltip="Get symbols from exchange and save them to the local database"></button>#}
-            <button type="button" class="getSymbols uk-button uk-button-small uk-button-secondary" uk-tooltip="Get symbols from exchange and save them to the local database">
-                Update symbols
-            </button>
+            <button type="button" class="importSymbols uk-icon-button" uk-icon="refresh" uk-tooltip="Get symbols from exchange and save them to the local database"></button>
 
         </div>
     </div>
@@ -113,24 +110,24 @@
 
 
     <p>
-        <button type="button" class="getCandles uk-button uk-button-small uk-button-secondary" uk-tooltip="Get candles from exchange and save them to the local database">
-            Get candles
+        <button type="button" class="importCandles uk-button uk-button-small uk-button-secondary"
+                uk-tooltip="Get candles from exchange with selected parameters and save them to the local database">
+            <i uk-icon="icon:download"></i> Import
+        </button>
+
+        <button type="button" class="showCandles uk-button uk-button-small uk-button-secondary" uk-tooltip="Show last saved data in the chart">
+            <i uk-icon="icon:folder"></i> Show saved
         </button>
     </p>
 
-    {% if settings.candles|length > 2 %}
-        <ul uk-accordion>
-            <li>
-                <a class="uk-accordion-title" href="#">Show candles</a>
-                <div class="uk-accordion-content">
+    <div id="chart"></div>
 
-                    {% embed "../chart.twig" %}{% endembed %}
-
-                </div>
-            </li>
-        </ul>
-
-    {% endif %}
+    <ul uk-accordion="animation:false; multiple:true" class="uk-hidden">
+        <li>
+            <a class="uk-accordion-title" href="#">Raw data</a>
+            <div class="uk-accordion-content"></div>
+        </li>
+    </ul>
 
 
 </div>

@@ -2,19 +2,13 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 
 
-let initChart = () => {
-    let obj = $('#chart');
-
-    if (!obj.length)
-        return false;
-
-    let style = obj.data('style') === 'dark' ? 'dark' : 'material',
-        theme = require(`@amcharts/amcharts4/themes/${style}.js`);
-
-    console.log(style);
+let init = data => {
 
     /* Chart code */
-// Themes begin
+    // Themes begin
+    let style = $('body').data('theme') === 'dark' ? 'dark' : 'material',
+        theme = require(`@amcharts/amcharts4/themes/${style}.js`);
+
     am4core.useTheme(theme.default);
 // Themes end
 
@@ -384,4 +378,4 @@ let initChart = () => {
 
 };
 
-export { initChart };
+export { init };

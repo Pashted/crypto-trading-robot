@@ -1,14 +1,16 @@
 import { initMain } from '../main';
 
-import * as Symbols from '../modules/exchangeSettings';
-import * as Settings from '../modules/transportLayer';
 import { Message, Warning, Error } from '../modules/notify';
-
-import { initChart } from '../modules/chart';
+import * as Settings from '../modules/transportLayer';
+import * as Accordion from '../modules/accordion';
+import * as Symbols from "../modules/settings/symbols";
+import * as Chart from '../modules/chart';
 
 initMain().then(() => {
 
     console.log('>> RUN_ settings.js');
+
+    Accordion.init();
 
     // show password
     $('input[type="password"]').siblings('a').on({
@@ -33,54 +35,79 @@ initMain().then(() => {
 
     let form = $('.settings-form');
 
-    form.find('.save').click(async function () {
+    form.find('.saveSettings').click(async function () {
         let btn = $(this);
         btn.attr('disabled', true);
 
-        let response = await Settings.set('Settings').catch(err => console.log(err));
+        await Settings.query('saveSettings');
 
         Message('Settings saved');
         btn.removeAttr('disabled');
     });
 
 
-    form.find('.reset').click(async function () {
+    form.find('.resetSettings').click(async function () {
         let btn = $(this);
         btn.attr('disabled', true);
 
-        let response = await Settings.reset('Settings').catch(err => console.log(err));
+        await Settings.query('resetSettings', true);
+        window.location.reload();
 
-        Warning('Settings reset complete!');
-        btn.removeAttr('disabled');
+        // Warning('Settings reset complete!');
+        // btn.removeAttr('disabled');
     });
 
 
-    form.find('.getSymbols').click(async function () {
+    form.find('.importSymbols').click(async function () {
         let btn = $(this);
         btn.attr('disabled', true);
 
-        let response = await Settings.get('Symbols').catch(err => console.log(err));
+        let response = await Settings.query('importSymbols');
+
+        Symbols.change(response);
 
         Message('Symbols updated');
         btn.removeAttr('disabled');
     });
 
 
-    form.find('.getCandles').click(async function () {
+    form.find('.importCandles').click(async function () {
         let btn = $(this);
         btn.attr('disabled', true);
 
-        let response = await Settings.get('Candles').catch(err => console.log(err));
+        let response = await Settings.query('importCandles');
 
-        Message('Candles updated');
+
+        Chart.init(response);
+
+        Accordion.show();
+        Accordion.fill(response);
+
+        Message('Import candles from the exchange complete');
         btn.removeAttr('disabled');
     });
 
-    form.find('.uk-accordion').on({
-        shown: function () {
-            $(this).attr('uk-accordion', 'collapsible:false').find('.uk-accordion-title').remove();
-            initChart();
+    form.find('.showCandles').click(async function () {
+        let btn = $(this);
+        btn.attr('disabled', true);
+
+        let response = await Settings.query('getCandles', true);
+
+        if (!response) {
+
+            Warning("Can't find any saved candles in the database");
+
+        } else {
+
+            Chart.init(response);
+
+            Accordion.show();
+            Accordion.fill(response);
+
+            Message('Read candles from the database complete');
         }
-    })
+
+        btn.removeAttr('disabled');
+    });
 
 });

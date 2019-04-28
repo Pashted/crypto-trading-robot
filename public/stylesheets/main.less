@@ -37,6 +37,10 @@
     font-weight: 600;
 }
 
+.hook-button-hover {
+    transition: none;
+}
+
 .hook-button, .uk-select {
     cursor: pointer;
 }
@@ -47,6 +51,14 @@
 
 .hook-button-text {
     padding: 2px 0;
+}
+
+.hook-button-small() {
+    .uk-icon {
+        vertical-align: top;
+        margin-top:     3px;
+        margin-right:   5px;
+    }
 }
 
 .hook-nav-default-item {
@@ -97,7 +109,7 @@ aside {
     }
 }
 
-#chart {
+#chart:not(:empty) {
     width:  100%;
     height: 600px;
 }
