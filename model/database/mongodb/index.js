@@ -18,6 +18,7 @@ module.exports = {
             resolve();
 
             console.log(">> DB CONNECTED successfully");
+            console.log(">> Go to http://localhost:3000");
         })
     }),
 
