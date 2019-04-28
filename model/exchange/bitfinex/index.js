@@ -70,12 +70,12 @@ module.exports = {
 
                     result.forEach(candle => {
                         data.push({
-                            timestamp: candle[0],
-                            OPEN:      candle[1],
-                            CLOSE:     candle[2],
-                            HIGH:      candle[3],
-                            LOW:       candle[4],
-                            VOLUME:    candle[5],
+                            date:   new Date(candle[0]).toISOString(),
+                            open:   candle[1],
+                            close:  candle[2],
+                            high:   candle[3],
+                            low:    candle[4],
+                            volume: candle[5],
                         });
                     });
 
