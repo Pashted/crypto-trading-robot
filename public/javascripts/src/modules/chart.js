@@ -4,11 +4,8 @@ import * as am4charts from "@amcharts/amcharts4/charts";
 
 let init = data => {
 
-    obj.remove();
-
-
     /* Chart code */
-// Themes begin
+    // Themes begin
     let style = $('body').data('theme') === 'dark' ? 'dark' : 'material',
         theme = require(`@amcharts/amcharts4/themes/${style}.js`);
 
