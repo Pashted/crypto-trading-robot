@@ -39,7 +39,7 @@ initMain().then(() => {
         let btn = $(this);
         btn.attr('disabled', true);
 
-        let response = await Settings.set('Settings').catch(err => console.log(err));
+        await Settings.query('saveSettings');
 
         Message('Settings saved');
         btn.removeAttr('disabled');
@@ -50,7 +50,7 @@ initMain().then(() => {
         let btn = $(this);
         btn.attr('disabled', true);
 
-        await Settings.reset('Settings').catch(err => console.log(err));
+        await Settings.query('resetSettings', true);
         window.location.reload();
 
         // Warning('Settings reset complete!');
@@ -62,9 +62,7 @@ initMain().then(() => {
         let btn = $(this);
         btn.attr('disabled', true);
 
-        let response = await Settings.get('Symbols').catch(err => console.log(err));
-
-        console.log('> getSymbols RESULT', response);
+        let response = await Settings.query('importSymbols');
 
         Symbols.change(response);
 
@@ -77,7 +75,7 @@ initMain().then(() => {
         let btn = $(this);
         btn.attr('disabled', true);
 
-        let response = await Settings.get('Candles').catch(err => console.log(err));
+        let response = await Settings.query('getCandles', true);
 
         Message('Candles updated');
         btn.removeAttr('disabled');
