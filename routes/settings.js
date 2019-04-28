@@ -62,9 +62,10 @@ router.post('/', async (req, res, next) => {
         case 'importCandles':
 
             let ex_candles = await exchange.get_candles(params); // get candles from exchange
-            message = ex_candles.data || null;
 
             await db.set('candles', filter, ex_candles); // save new candles to db
+
+            message = ex_candles.data ? ex_candles : null;
 
             break;
 
@@ -73,7 +74,6 @@ router.post('/', async (req, res, next) => {
             let db_candles = await db.get('candles', filter);
 
             message = db_candles.data ? db_candles : null;
-
 
             break;
 
