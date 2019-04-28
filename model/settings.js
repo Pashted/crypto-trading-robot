@@ -36,9 +36,9 @@ module.exports = async function () {
     /**
      * Get exchange candles from db
      */
-    let candles = await db.get('candles', filter);
+    // let candles = await db.get('candles', filter);
 
-    settings.candles = JSON.stringify(candles.data, null, 4);
+    // settings.candles = JSON.stringify(candles.data, null, 4);
 
 
     // console.log('>> USER SETTINGS', settings);
