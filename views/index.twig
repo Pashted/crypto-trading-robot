@@ -8,7 +8,7 @@
     <script src="/javascripts/dist/{{ section }}.js"></script>
     {% block head %}{% endblock %}
 </head>
-<body>
+<body data-theme="{{ settings.user.theme }}">
 
 <div class="uk-container uk-container-expand uk-margin-large-top">
 
@@ -16,7 +16,7 @@
 
         {% embed "sidebar.twig" %}{% endembed %}
 
-        <div class="uk-width-expand uk-animation-slide-left-small">
+        <div class="uk-width-expand">
 
             {% if title %}
                 <h1>{{ title }}</h1>
