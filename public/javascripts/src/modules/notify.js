@@ -6,21 +6,23 @@
  * @param time
  * @param place
  */
-let show = (text, icon, style, time, place) => {
+let show = (text, style, icon, time, place) => {
 
         let i = icon || $('aside .uk-active [uk-icon]').attr('uk-icon');
 
         UIkit.notification({
             message: `<span uk-icon='${i}'></span> ${text}`,
             status:  style || 'primary',
-            timeout: time || 2500,
+            timeout: time || 3000,
             pos:     place || 'bottom-right',
         });
     },
 
-    Message = text => show(text),
-    Warning = text => show(text, 'info', 'warning', 6000),
-    Error = text => show(text, 'warning', 'danger', 60000);
+    Message = text => show(text, 'success'),
+    Warning = text => show(text, 'warning', 'info', 6000),
+    Error = text => show(text, 'danger', 'warning', 60000),
+    Buy = order => show(`Buy ${order.pair}<br>P: ${order.price}, V: ${order.volume}`, 'success', 'bolt', null, 'bottom-left'),
+    Sell = order => show(`Sell ${order.pair}<br>P: ${order.price}, V: ${order.volume}`, 'danger', 'bolt', null, 'bottom-left');
 
 
-export { Message, Warning, Error };
+export { Message, Warning, Error, Buy, Sell };
