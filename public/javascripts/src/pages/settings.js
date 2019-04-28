@@ -40,9 +40,10 @@ initMain().then(() => {
         btn.attr('disabled', true);
 
         await Settings.query('saveSettings');
+        window.location.reload();
 
-        Message('Settings saved');
-        btn.removeAttr('disabled');
+        // Message('Settings saved');
+        // btn.removeAttr('disabled');
     });
 
 
