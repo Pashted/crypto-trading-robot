@@ -35,7 +35,7 @@ initMain().then(() => {
 
     let form = $('.settings-form');
 
-    form.find('.save').click(async function () {
+    form.find('.saveSettings').click(async function () {
         let btn = $(this);
         btn.attr('disabled', true);
 
@@ -46,7 +46,7 @@ initMain().then(() => {
     });
 
 
-    form.find('.reset').click(async function () {
+    form.find('.resetSettings').click(async function () {
         let btn = $(this);
         btn.attr('disabled', true);
 
@@ -58,7 +58,7 @@ initMain().then(() => {
     });
 
 
-    form.find('.getSymbols').click(async function () {
+    form.find('.importSymbols').click(async function () {
         let btn = $(this);
         btn.attr('disabled', true);
 
@@ -71,15 +71,43 @@ initMain().then(() => {
     });
 
 
-    form.find('.getCandles').click(async function () {
+    form.find('.importCandles').click(async function () {
+        let btn = $(this);
+        btn.attr('disabled', true);
+
+        let response = await Settings.query('importCandles');
+
+
+        Chart.init(response);
+
+        Accordion.show();
+        Accordion.fill(response);
+
+        Message('Import candles from the exchange complete');
+        btn.removeAttr('disabled');
+    });
+
+    form.find('.showCandles').click(async function () {
         let btn = $(this);
         btn.attr('disabled', true);
 
         let response = await Settings.query('getCandles', true);
 
-        Message('Candles updated');
+        if (!response) {
+
+            Warning("Can't find any saved candles in the database");
+
+        } else {
+
+            Chart.init(response);
+
+            Accordion.show();
+            Accordion.fill(response);
+
+            Message('Read candles from the database complete');
+        }
+
         btn.removeAttr('disabled');
     });
-
 
 });
