@@ -1,31 +1,47 @@
 {
-    "name": "crypto-trading-robot",
-    "version": "0.0.1",
-    "private": true,
-    "scripts": {
-        "start": "node ./bin/www",
-        "build": "webpack --mode production --progress",
-        "dev": "webpack --watch"
-    },
-    "dependencies": {
-        "bitfinex-api-node": "^2.0.5",
-        "cookie-parser": "~1.4.3",
-        "debug": "^4.1.1",
-        "express": "~4.16.0",
-        "http-errors": "^1.7.2",
-        "mongodb": "^3.2.3",
-        "morgan": "~1.9.0",
-        "request": "^2.88.0",
-        "twig": "^1.13.2"
-    },
-    "devDependencies": {
-        "@amcharts/amcharts4": "^4.4.0",
-        "chosenjs": "^1.4.3",
-        "jquery": "^3.4.0",
-        "uikit": "^3.1.2",
-        "vue": "^2.6.10",
-        "webpack": "^4.30.0",
-        "webpack-cli": "^3.3.0",
-        "acorn": "^6.1.1"
-    }
+  "name": "trade-bot",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "SET DEBUG=crypto-trading-robot:* & node ./bin/http",
+    "build": "npm install > ./install.log & npm run webpack & npm start",
+    "webpack": " webpack --progress --mode production >> ./install.log ",
+    "dev": "webpack --progress --mode development --watch"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.4",
+    "debug": "^4.1.1",
+    "express": "^4.17.0",
+    "mongodb": "^3.2.5",
+    "morgan": "^1.9.1",
+    "ws": "^7.0.0"
+  },
+  "devDependencies": {
+    "@amcharts/amcharts4": "^4.4.6",
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/runtime": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "acorn": "^6.1.1",
+    "autoprefixer": "^9.5.1",
+    "babel-loader": "^8.0.6",
+    "copy-webpack-plugin": "^5.0.3",
+    "css-loader": "^2.1.1",
+    "cssnano": "^4.1.10",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^3.0.1",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
+    "postcss-loader": "^3.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-router-dom": "^5.0.0",
+    "style-loader": "^0.23.1",
+    "uikit": "^3.1.5",
+    "url-loader": "^1.1.2",
+    "webpack": "^4.31.0",
+    "webpack-cli": "^3.3.2"
+  }
 }
