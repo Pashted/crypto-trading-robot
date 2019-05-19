@@ -15,10 +15,10 @@ export let
         </div>,
 
 
-    Button = ({ name, className, onClick, disabled }) =>
+    Button = ({ name, style, onClick, disabled }) =>
         <button
             type="button"
-            className={'uk-button uk-margin-small-right uk-button-' + (className || 'default')}
+            className={'uk-button uk-margin-small-right uk-button-' + (style || 'default')}
             onClick={onClick}
             disabled={disabled}>
             {name}
@@ -86,7 +86,7 @@ class Input extends Component {
 
 
 class Textarea extends Component {
-    state = { value: this.props.array.join("\n") };
+    state = { value: this.props.array ? this.props.array.join("\n") : '' };
 
     change = ({ target: { value } }) => this.setState({ value });
 
@@ -106,12 +106,8 @@ class Textarea extends Component {
     };
 
     componentWillReceiveProps({ array }) {
-        this.setState({ value: array.join("\n") })
-    }
-
-
-    componentDidUpdate() {
-        console.log('## Textarea Component Did Update');
+        if (array)
+            this.setState({ value: array.join("\n") })
     }
 
 
@@ -122,7 +118,7 @@ class Textarea extends Component {
                 className="uk-textarea uk-width-large"
                 name={name}
                 id={name}
-                rows={this.props.array.length}
+                rows={this.props.array && this.props.array.length}
                 onBlur={this.blur}
                 onChange={this.change}
                 disabled={disabled}

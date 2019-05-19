@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 
 import Settings from './index'
-import { Row, Select, Input, Button, Textarea } from '../../Form'
+import { Row, Select, Input, Button, Textarea } from '../../form'
 
 import { setTitle } from "../../../helpers"
 
 import { send } from '../../../ws'
 
-import SettingsContext from '../../Context/UserContext'
+import AppContext from '../../Context/AppContext'
 import ExchangeContext from '../../Context/ExchangeContext'
 
 
@@ -22,17 +22,24 @@ class Exchange extends Component {
             list: []
         };
 
-        this.getExList();
     }
 
-    getExList() {
-        send({ method: 'getExchangesList' })
-            .catch(err => console.log(err))
-            .then(list => this.setState({ list }));
-    };
+
+    async componentDidMount() {
+        console.log('## Exchange componentDidMount');
+
+        try {
+            let list = await send({ method: 'getExchangesList' });
+            this.setState({ list });
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
 
     componentDidUpdate() {
-        console.log('## Exchange Component Did Update');
+        console.log('## Exchange componentDidUpdate');
     }
 
 
@@ -40,39 +47,35 @@ class Exchange extends Component {
         return (
             <Settings desc='Exchange parameters'>
 
-                <SettingsContext.Consumer>
-                    {({ exchange, switchExchange }) => (
+                <AppContext.Consumer>
+                    {({ exchange, setParam }) => (
+                        <Row name='exchange' label='Exchange'>
+                            <Select name='exchange' options={this.state.list} value={exchange} onChange={setParam}/>
+                        </Row>
+                    )}
+                </AppContext.Consumer>
+
+                <ExchangeContext.Consumer>
+                    {({ apiKey, fee, timeframes, setParam, resetExchange }) => (
                         <>
-                            <Row name='exchange' label='Exchange'>
-                                <Select name='exchange' options={this.state.list} value={exchange} onChange={switchExchange}/>
+                            {apiKey !== undefined && <Row name='apiKey' label='Api-Key'>
+                                <Input name='apiKey' value={apiKey} onBlur={setParam}/>
+                            </Row>}
+
+                            {fee !== undefined && <Row name='fee' label='Exchange maker fee'>
+                                <Input name='fee' value={fee} onBlur={setParam}/>
+                            </Row>}
+
+                            {timeframes !== undefined && <Row name='timeframes' label='Timeframes' tooltip='One value on each line'>
+                                <Textarea name='timeframes' array={timeframes} onBlur={setParam}/>
+                            </Row>}
+
+                            <Row>
+                                <Button name='Reset this exchange' style='secondary' onClick={resetExchange}/>
                             </Row>
-
-                            <ExchangeContext.Consumer>
-                                {({ apiKey, fee, timeframes, setParam, resetExchange }) => (
-                                    <>
-                                        <Row name='apiKey' label='Api-Key'>
-                                            <Input name='apiKey' value={apiKey} onBlur={setParam}/>
-                                        </Row>
-
-                                        <Row name='fee' label='Exchange maker fee'>
-                                            <Input name='fee' value={fee} onBlur={setParam}/>
-                                        </Row>
-
-                                        <Row name='timeframes' label='Timeframes' tooltip='One value on each line'>
-                                            <Textarea name='timeframes' array={timeframes} onBlur={setParam}/>
-                                        </Row>
-
-                                        <Row>
-                                            <Button name='Reset this exchange' onClick={resetExchange}/>
-                                        </Row>
-                                    </>
-                                )}
-                            </ExchangeContext.Consumer>
-
                         </>
                     )}
-                </SettingsContext.Consumer>
-
+                </ExchangeContext.Consumer>
 
             </Settings>
         )

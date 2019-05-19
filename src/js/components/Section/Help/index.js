@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Header } from '../../UIkit'
+import { Header } from '../../uikit'
 import { setTitle } from "../../../helpers";
 
 class Help extends Component {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
-import { Header } from '../../UIkit'
-import { Form, Footer, Button } from '../../Form'
+import { Header } from '../../uikit'
+import { Form, Footer, Button } from '../../form'
 
 
 class Trading extends Component {

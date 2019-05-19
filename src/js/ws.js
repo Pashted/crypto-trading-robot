@@ -83,7 +83,7 @@ let on = (name, callbacks) => {
      * Callbacks are saved to the array in case of reconnection to the server.
      * On the new connection they need to hang up again - this is the "connect" function's area of responsibility.
      */
-    console.log('~~ WS.ON:', name);
+    // console.log('~~ WS.ON:', name);
 
     promiseQueue[name] = callbacks;
 };
@@ -97,7 +97,7 @@ let on = (name, callbacks) => {
 let off = (name, rejectReason) => {
 
     if (promiseQueue.hasOwnProperty(name)) {
-        console.log('~~ WS.OFF:', name, rejectReason ? 'REJECTED' : '');
+        // console.log('~~ WS.OFF:', name, rejectReason ? 'REJECTED' : '');
 
         promiseQueue[name].reject(rejectReason || false);
 

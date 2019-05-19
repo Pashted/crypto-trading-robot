@@ -1,12 +1,12 @@
 import React, { createContext } from 'react'
 
-import exchange from '../../../../controllers/storage/exchangeParams'
+import params from '../../../../controllers/storage/exchangeParams'
 
-let Context = createContext(exchange);
+let Context = createContext(params);
 
-console.log('$$ Exchange_Context', Context, exchange);
+console.log('$$ Exchange_Context', Context, params);
 
 
 export default Context;
 
-export { exchange as defaultExSettings };
+export { params as defaultExSettings };
