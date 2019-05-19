@@ -10,9 +10,6 @@ class Trading extends Component {
 
     }
 
-    saveForm() {
-
-    }
 
     render() {
         return (
@@ -23,7 +20,7 @@ class Trading extends Component {
                     {this.props.children}
 
                     <Footer>
-                        <Button name='Start' class='primary' onClick={this.saveForm}/>
+                        <Button name='Start' className='primary' onClick={this.saveForm}/>
                         <Button name='Stop'/>
                     </Footer>
                 </Form>

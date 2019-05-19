@@ -31,7 +31,7 @@ let start = server => {
 
             let request = JSON.parse(query),
                 response = {
-                    event:    request.method,
+                    event: request.method,
                     // infinity: request.infinity || false
                 };
 
@@ -41,14 +41,34 @@ let start = server => {
             try {
                 switch (request.method) {
 
-                    case 'getSettings':
-                        response.data = await db.get('settings');
+                    case 'getUserSettings':
+                        response.data = await db.get('settings', { _context: 'user' });
                         break;
+
+                    case 'setUserSettings':
+                        response.data = await db.set('settings', { _context: 'user' }, request.data);
+                        break;
+
 
                     case 'getExchangesList':
                         response.data = require('../models/exchange');
                         break;
 
+                    case 'getExchangeSettings':
+                        response.data = await db.get('settings', { _context: 'exchange', exchange: request.exchange });
+                        break;
+
+                    case 'setExchangeSettings':
+                        response.data = await db.set('settings', { _context: 'exchange', exchange: request.data.exchange }, request.data);
+                        break;
+
+                    case 'resetSettings':
+                        response.data = await db.delete('settings');
+                        break;
+
+                    case 'resetExchange':
+                        response.data = await db.delete('settings', { _context: 'exchange', exchange: request.exchange });
+                        break;
 
                     default:
                         response.status = 'empty response';
@@ -61,6 +81,8 @@ let start = server => {
 
             }
 
+            if (response.data && response.data._id)
+                delete response.data._id;
 
             send(response);
 

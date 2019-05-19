@@ -23,7 +23,8 @@ let connect = () => {
 
             off(name);
 
-            // TODO: добавить хранение data в очереди для повторяющихся infinity событий, чтобы после перезапуска сервера запросить данные снова
+
+            // TODO: save data in the queue for recurring infinity events, to request the data again after the server restarts
         }
 
         ws.onclose = reconnect;
@@ -38,9 +39,7 @@ let connect = () => {
 
             if (response.event && promiseQueue.hasOwnProperty(response.event)) {
 
-                console.log('<< WS.PROMISE.RESOLVE:', response.event);
-
-                // Вызов на клиенте сохраненного ранее события с передачей ему данных с сервера
+                // Calling a previously saved event on the client transferring data from the server to it
                 promiseQueue[response.event].resolve(response.data);
 
                 if (!response.infinity)
@@ -59,7 +58,7 @@ let connect = () => {
 
 
 /**
- * Переподключение при отключении от сервера
+ * Reconnect when disconnected from server
  */
 let reconnect = () => {
     console.log('~~ WS.RECONNECT: Connection lost. Reconnect in 1 sec...');
@@ -69,20 +68,20 @@ let reconnect = () => {
 
 
 /**
- * Подписка из других модулей на события сервера
+ * Subscription from other modules to server events
  * @param name {String}
  * @param callbacks {Object}
  */
 let on = (name, callbacks) => {
 
-    // переподписка на событие
+    // re-subscription
     if (promiseQueue.hasOwnProperty(name))
         off(name);
 
 
     /**
-     * Колбеки сохраняются в массив на случай переподключения к серверу.
-     * На новое соединение их нужно вешать заново - этим занимается функция connect.
+     * Callbacks are saved to the array in case of reconnection to the server.
+     * On the new connection they need to hang up again - this is the "connect" function's area of responsibility.
      */
     console.log('~~ WS.ON:', name);
 
@@ -91,14 +90,14 @@ let on = (name, callbacks) => {
 
 
 /**
- * Снятие подписки на событие
+ * Removing subscription to an event
  * @param name {String}
  * @param rejectReason
  */
 let off = (name, rejectReason) => {
 
     if (promiseQueue.hasOwnProperty(name)) {
-        console.log('~~ WS.OFF:', name);
+        console.log('~~ WS.OFF:', name, rejectReason ? 'REJECTED' : '');
 
         promiseQueue[name].reject(rejectReason || false);
 
@@ -112,7 +111,7 @@ let off = (name, rejectReason) => {
 
 
 /**
- * Отправка сообщения на сервер с подпиской на событие ответа
+ * Sending a message to the server with a response event subscription
  * @param data {Object}
  */
 let send = data => new Promise((resolve, reject) => {
@@ -121,7 +120,7 @@ let send = data => new Promise((resolve, reject) => {
 
     console.log('>> WS.SEND:', data);
 
-    // формирование строки из объекта перед отправкой
+    // forming a string from an object before sending
     ws.send(JSON.stringify(data));
 });
 

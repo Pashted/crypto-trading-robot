@@ -1,2 +1,2 @@
 export let setTitle = title =>
-    document.title = title + ' ~ TradeBot';
+    document.title = title + ' - TradeBot';

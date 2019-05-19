@@ -1,8 +1,3 @@
-//.hook-nav-default() {
-//    font-weight: 300;
-//}
-
-
 .hook-text-lead, .hook-form-legend {
     font-weight: 300;
 }
@@ -83,18 +78,18 @@ aside {
     min-width: 200px;
 }
 
-.chosen-container {
-    font:      inherit;
-    min-width: 100px;
-    .chosen-results {
-        max-height: 300px;
-    }
-}
+//.chosen-container {
+//    font:      inherit;
+//    min-width: 100px;
+//    .chosen-results {
+//        max-height: 300px;
+//    }
+//}
 
-#chart:not(:empty) {
-    width:  100%;
-    height: 600px;
-}
+//#chart:not(:empty) {
+//    width:  100%;
+//    height: 600px;
+//}
 
 
 .hook-button-secondary {
@@ -112,4 +107,19 @@ aside {
 .hook-nav-default-item-active {
     background: #222;
     box-shadow: -40px 0 0 0 #222;
+}
+
+.hook-form-label {
+    &[for] {
+        cursor: pointer;
+    }
+
+    &[uk-tooltip] {
+        border-bottom: 1px dashed fade(white, 40%);
+        display:       inline-block !important;
+
+        &:hover {
+            border-color: fade(white, 15%);
+        }
+    }
 }
