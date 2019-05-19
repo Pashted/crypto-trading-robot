@@ -7,8 +7,8 @@ import { setTitle } from "../../../helpers"
 
 import { send } from '../../../ws'
 
-import SettingsContext from '../../Context/UserSettings'
-import ExchangeContext from '../../Context/Exchange'
+import SettingsContext from '../../Context/UserContext'
+import ExchangeContext from '../../Context/ExchangeContext'
 
 
 class Exchange extends Component {

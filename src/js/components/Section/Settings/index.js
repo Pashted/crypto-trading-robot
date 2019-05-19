@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { Header } from '../../UIkit'
 import { Form, Footer, Button } from '../../Form'
 
-import { send } from '../../../ws'
+import SettingsContext from "../../Context/UserContext";
 
 class Settings extends Component {
 
@@ -17,11 +17,9 @@ class Settings extends Component {
 
                     {this.props.children}
                     <Footer>
-                        <Button name='Reset all settings' className='primary' onClick={() =>
-                            send({ method: 'resetSettings' })
-                                .catch(err => console.log(err))
-                                .then(res => console.log(res))
-                        }/>
+                        <SettingsContext.Consumer>
+                            {({ resetSettings }) => <Button name='Reset all settings' className='primary' onClick={resetSettings}/>}
+                        </SettingsContext.Consumer>
                     </Footer>
                 </Form>
 

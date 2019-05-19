@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Trading from './index'
 import { setTitle } from "../../../helpers";
 
-import ExchangeContext from '../../Context/Exchange'
+import ExchangeContext from '../../Context/ExchangeContext'
 
 let Emulation = () => {
     setTitle('Emulation trading');
