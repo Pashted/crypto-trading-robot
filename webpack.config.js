@@ -1,7 +1,20 @@
 const path = require('path'),
     webpack = require('webpack'),
     CopyPlugin = require('copy-webpack-plugin'),
-    ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+    ExtractTextPlugin = require('extract-text-webpack-plugin'),
+    dark_theme = new ExtractTextPlugin('styles/dark.css'),
+    light_theme = new ExtractTextPlugin('styles/light.css'),
+    extractTextParams = {
+        fallback:   'style-loader',
+        publicPath: '/',
+        use:        [
+            { loader: 'css-loader', options: { sourceMap: true } },
+            { loader: 'postcss-loader' },
+            { loader: 'less-loader', options: { sourceMap: true } }
+        ],
+    };
+
 
 let dev = true;
 
@@ -51,7 +64,7 @@ module.exports = {
             { from: '../icons', to: './images/icons/' }
         ]),
 
-        new ExtractTextPlugin('styles/template.css')
+        light_theme, dark_theme
     ],
 
     module: {
@@ -62,16 +75,12 @@ module.exports = {
                 use:     { loader: "babel-loader" }
             },
             {
-                test: /\.less$/,
-                use:  ExtractTextPlugin.extract({
-                    fallback:   'style-loader',
-                    publicPath: '/',
-                    use:        [
-                        { loader: 'css-loader', options: { sourceMap: true } },
-                        { loader: 'postcss-loader' },
-                        { loader: 'less-loader', options: { sourceMap: true } }
-                    ],
-                })
+                test: /light\.less$/,
+                use:  light_theme.extract(extractTextParams)
+            },
+            {
+                test: /dark\.less$/,
+                use:  dark_theme.extract(extractTextParams)
             },
             {
                 test:    /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,

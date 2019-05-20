@@ -4,7 +4,7 @@ import AppContext, { defaultAppSettings } from "./AppContext";
 import ExchangeProvider from "./ExchangeProvider";
 
 import { send } from "../../ws";
-import { getParam } from '../../helpers'
+import { getParam, setTheme } from '../../helpers'
 
 class AppProvider extends Component {
 
@@ -29,6 +29,8 @@ class AppProvider extends Component {
             // TODO: prevent spam settings reset, when it's already cleared
 
             try {
+                setTheme(defaultAppSettings.theme);
+
                 let res = await send({ method: 'resetSettings' });
                 console.log('~~ resetSettings', res);
 

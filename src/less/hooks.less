@@ -78,19 +78,10 @@ aside {
     min-width: 200px;
 }
 
-//.chosen-container {
-//    font:      inherit;
-//    min-width: 100px;
-//    .chosen-results {
-//        max-height: 300px;
-//    }
-//}
-
 //#chart:not(:empty) {
 //    width:  100%;
 //    height: 600px;
 //}
-
 
 .hook-button-secondary {
     border-color: @global-color;
@@ -105,8 +96,8 @@ aside {
 }
 
 .hook-nav-default-item-active {
-    background: #222;
-    box-shadow: -40px 0 0 0 #222;
+    background: @sidebar-active-background;
+    box-shadow: -40px 0 0 0 @sidebar-active-background;
 }
 
 .hook-form-label {
@@ -115,11 +106,11 @@ aside {
     }
 
     &[uk-tooltip] {
-        border-bottom: 1px dashed fade(white, 40%);
+        border-bottom: 1px dashed fade(@form-label-color, 40%);
         display:       inline-block !important;
 
         &:hover {
-            border-color: fade(white, 15%);
+            border-color: fade(@form-label-color, 15%);
         }
     }
 }
