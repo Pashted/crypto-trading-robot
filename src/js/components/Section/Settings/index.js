@@ -1,18 +1,14 @@
 import React, { Component } from 'react'
 
-import { Header } from '../../UIkit'
-import { Form, Footer, Button } from '../../Form'
+import { Header } from '../../uikit'
+import { Form, Footer, Button } from '../../form'
 
+import AppContext from "../../Context/AppContext";
 
 class Settings extends Component {
-    constructor(props) {
-        super(props);
 
-    }
+    static contextType = AppContext;
 
-    saveForm() {
-
-    }
 
     render() {
         return (
@@ -21,14 +17,10 @@ class Settings extends Component {
 
                 <Form>
                     {this.props.children}
-
                     <Footer>
-                        <Button name='Save' class='primary' onClick={this.saveForm}/>
-                        <Button name='Reset'/>
+                        <Button name='Reset all settings' onClick={this.context.resetSettings}/>
                     </Footer>
                 </Form>
-
-
             </>
         )
     }

@@ -1,5 +1,5 @@
 const MongoClient = require('mongodb').MongoClient,
-    dbName = 'trade_bot',
+    dbName = 'bot',
     client = new MongoClient('mongodb://localhost:27017', { useNewUrlParser: true });
 
 
@@ -48,7 +48,7 @@ module.exports = {
 
                             if (results === null || !results.length) {
 
-                                resolve({});
+                                resolve(null);
 
                             } else {
                                 resolve(results[0]);
@@ -112,7 +112,7 @@ module.exports = {
 
                 let collection = client.db(dbName).collection(collectionName);
 
-                collection.deleteOne(
+                collection.deleteMany(
                     filter || {},
                     (err, result) => {
 

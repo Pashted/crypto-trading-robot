@@ -1,15 +1,15 @@
-import '../less/index.less'
+import '../less/themes/light.less'
+import '../less/themes/dark.less'
 
 import UIKit from 'uikit'
 import Icons from 'uikit/dist/js/uikit-icons';
 
 UIKit.use(Icons);
 
-import * as ws from './ws'
+import { connect as WebSocketConnect } from './ws'
 import AppInit from './components/App'
 
-ws.connect()
-    .then(() => ws.send({ method: 'getSettings' }))
-    .then(res => AppInit(res))
-    .catch(err=> console.log(err));
+WebSocketConnect()
+    .catch(err => console.log(err))
+    .then(AppInit);
 
