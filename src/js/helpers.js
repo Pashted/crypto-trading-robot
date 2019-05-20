@@ -13,4 +13,15 @@ export let
         let param = {};
         param[name] = value;
         return param;
+    },
+
+
+    /**
+     * Swaps theme styles
+     * @param theme
+     */
+    setTheme = theme => {
+        let stylesheet = [].filter.call(document.getElementsByTagName('link'), el => el.rel === 'stylesheet')[0];
+
+        stylesheet.href = `/styles/${theme}.css`;
     };

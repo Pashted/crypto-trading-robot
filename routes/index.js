@@ -1,7 +1,6 @@
 const express = require('express'),
     router = express.Router(),
     path = require('path'),
-    index = path.resolve(__dirname, '../src/html/index.html'),
     sections = [
         '/',
         '/trading/emulation/',
@@ -10,9 +9,17 @@ const express = require('express'),
         '/settings/strategy/',
         '/settings/interface/',
         '/help/'
-    ];
+    ],
+    db = require('../models/database/mongodb'),
+    defaultTheme = require('../controllers/storage/appParams').theme;
 
-router.get(sections, (req, res) => res.sendFile(index));
+
+router.get(sections, async (req, res) => {
+    const settings = await db.get('settings', { _context: 'user' }),
+        theme = settings ? settings.theme : defaultTheme;
+
+    res.sendFile(path.resolve(__dirname, `../src/html/${theme}.html`));
+});
 
 // Parent sections - redirects to its first element
 router.get('/trading/', (req, res) => res.redirect('/trading/emulation/'));

@@ -1,4 +1,5 @@
-import '../less/index.less'
+import '../less/themes/light.less'
+import '../less/themes/dark.less'
 
 import UIKit from 'uikit'
 import Icons from 'uikit/dist/js/uikit-icons';

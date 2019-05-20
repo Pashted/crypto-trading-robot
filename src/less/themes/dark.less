@@ -1,0 +1,68 @@
+@import '../template';
+
+@global-primary-background: #dcad61;
+@global-background: #181818;
+@base-body-background: #2d2d2d;
+
+@global-color: fade(white, 80%);
+@base-heading-color: white;
+@global-muted-color: #808080;
+
+@global-border: fade(white, 10%);
+@base-hr-border: fade(white, 5%);
+@heading-divider-border: @base-hr-border;
+
+@button-primary-color: #131313;
+@button-primary-hover-color: @button-primary-color;
+@button-primary-active-color: @button-primary-color;
+
+@button-default-color: @global-primary-background;
+@button-default-border: @global-primary-background;
+
+@button-default-hover-background: @global-primary-background;
+@button-default-hover-border: @button-default-border;
+@button-default-hover-color: @button-primary-color;
+
+@button-default-active-background: lighten(@global-primary-background, 8%);
+@button-default-active-border: @button-default-active-background;
+@button-default-active-color: @button-default-hover-color;
+
+@button-text-color: @global-color;
+@button-text-hover-color: @base-heading-color;
+
+@button-secondary-background: transparent;
+@button-secondary-color: @global-color;
+@button-secondary-hover-background: @global-color;
+@button-secondary-hover-color: @button-primary-hover-color;
+@button-secondary-active-background: lighten(@base-body-background, 2%);
+
+@icon-button-color: @button-secondary-color;
+@icon-button-background: @button-secondary-background;
+
+@icon-button-hover-background: @icon-button-background;
+@icon-button-hover-color: @button-primary-hover-background;
+
+@icon-button-active-background: @icon-button-background;
+@icon-button-active-color: @button-primary-active-background;
+
+@notification-message-background: @global-background;
+//@notification-message-background: @global-primary-background;
+//@notification-message-primary-color: @button-primary-color;
+
+@form-select-option-color: @global-color;
+@form-background: #1b1b1b;
+//@form-border-width: 0;
+@form-disabled-background: fade(@form-background, 50%);
+@form-disabled-border: fade(white, 5.5%);
+
+@form-label-color: @base-heading-color;
+
+@text-lead-color: @global-color;
+
+@tab-item-active-color: @text-primary-color;
+
+@nav-default-item-active-color: @base-heading-color;
+
+@accordion-title-color: @base-heading-color;
+
+@sidebar-active-background: fade(@base-body-background, 50%);
