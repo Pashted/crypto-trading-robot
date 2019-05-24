@@ -70,6 +70,8 @@ class AppProvider extends Component {
 
             if (_settings)
                 this.setState(Object.assign({}, _settings, this.UIMethods)); // if there are saved settings, apply them
+            else
+                this.setState(this.defaultState);
 
         } catch (err) {
             console.log(err);

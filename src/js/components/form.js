@@ -3,8 +3,8 @@ import React, { Component } from "react";
 
 export let
 
-    Form = ({ action, method, children }) =>
-        <form action={action || '/'} method={method || 'POST'} className="uk-form-horizontal">{children}</form>,
+    Form = ({ action, method, onSubmit, children }) =>
+        <form action={action} method={method} onSubmit={onSubmit} className="uk-form-horizontal">{children}</form>,
 
 
     Row = ({ name, label, children, tooltip }) =>
@@ -33,7 +33,7 @@ export let
     ),
 
 
-    Select = ({ name, value, defaultValue, options, onChange }) =>
+    Select = ({ name, value, defaultValue, options, optionsAssoc, onChange }) =>
         <select
             name={name}
             id={name}
@@ -42,15 +42,16 @@ export let
             defaultValue={defaultValue}
             onChange={onChange}>
             {options && options.map(opt =>
-                <option key={opt} value={opt}>
-                    {opt.substr(0, 1).toUpperCase() + opt.substr(1)}
-                </option>
+                <option key={opt} value={opt}>{opt.substr(0, 1).toUpperCase() + opt.substr(1)}</option>
+            )}
+            {optionsAssoc && Object.keys(optionsAssoc).map(key =>
+                <option key={key} value={key}>{optionsAssoc[key]}</option>
             )}
         </select>;
 
 
 class Input extends Component {
-    state = { value: this.props.value };
+    state = { value: this.props.value || '' };
 
     change = ({ target: { value } }) => this.setState({ value });
 
@@ -68,10 +69,10 @@ class Input extends Component {
     }
 
     render() {
-        const { name, type, disabled } = this.props;
+        const { name, type, disabled, width } = this.props;
         return (
             <input
-                className="uk-input uk-width-large"
+                className={'uk-input uk-form-width-' + (width || 'small')}
                 name={name}
                 id={name}
                 type={type || 'text'}
@@ -115,7 +116,7 @@ class Textarea extends Component {
         const { name, disabled } = this.props;
         return (
             <textarea
-                className="uk-textarea uk-width-large"
+                className="uk-textarea uk-form-width-medium"
                 name={name}
                 id={name}
                 rows={this.props.array && this.props.array.length}

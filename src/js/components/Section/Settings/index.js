@@ -15,7 +15,7 @@ class Settings extends Component {
             <>
                 <Header name='Settings' title='Settings section' desc={this.props.desc}/>
 
-                <Form>
+                <Form onSubmit={e => e.preventDefault()}>
                     {this.props.children}
                     <Footer>
                         <Button name='Reset all settings' onClick={this.context.resetSettings}/>

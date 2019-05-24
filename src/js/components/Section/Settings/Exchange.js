@@ -59,10 +59,10 @@ class Exchange extends Component {
                     {({ apiKey, fee, timeframes, setParam, resetExchange }) => (
                         <>
                             {apiKey !== undefined && <Row name='apiKey' label='Api-Key'>
-                                <Input name='apiKey' value={apiKey} onBlur={setParam}/>
+                                <Input name='apiKey' value={apiKey} onBlur={setParam} width='medium'/>
                             </Row>}
 
-                            {fee !== undefined && <Row name='fee' label='Exchange maker fee'>
+                            {fee !== undefined && <Row name='fee' label='Exchange maker fee, %'>
                                 <Input name='fee' value={fee} onBlur={setParam}/>
                             </Row>}
 

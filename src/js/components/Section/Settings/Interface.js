@@ -12,13 +12,21 @@ let Interface = () => {
     return (
         <Settings desc='Interface tuning'>
             <AppContext.Consumer>
-                {({ theme, setParam }) => (
-                    <Row name='theme' label='Theme'>
-                        <Select name='theme' options={[ 'light', 'dark' ]} value={theme} onChange={event => {
-                            setTheme(event.target.value);
-                            setParam(event);
-                        }}/>
-                    </Row>
+                {({ theme, lang, setParam }) => (
+                    <>
+                        <Row name='theme' label='Theme'>
+                            <Select name='theme' options={['light', 'dark']} value={theme} onChange={event => {
+                                setTheme(event.target.value);
+                                setParam(event);
+                            }}/>
+                        </Row>
+
+                        <Row name='lang' label='Language'>
+                            <Select name='lang' value={lang} onChange={setParam} optionsAssoc={{
+                                en: 'English'
+                            }}/>
+                        </Row>
+                    </>
                 )}
             </AppContext.Consumer>
         </Settings>
