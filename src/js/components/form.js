@@ -11,18 +11,24 @@ export let
         <div className="uk-margin-small">
             {label && <label className="uk-form-label" htmlFor={name} uk-tooltip={tooltip}>{label}</label>}
 
-            <div className="uk-form-controls">{children}</div>
+            <div className="uk-form-controls uk-flex uk-flex-middle">{children}</div>
         </div>,
 
 
     Button = ({ name, style, onClick, disabled }) =>
-        <button
-            type="button"
-            className={'uk-button uk-margin-small-right uk-button-' + (style || 'default')}
-            onClick={onClick}
-            disabled={disabled}>
+        <button type="button"
+                className={'uk-button uk-margin-small-right uk-button-' + (style || 'default')}
+                onClick={onClick}
+                disabled={disabled}>
             {name}
         </button>,
+
+    IconButton = ({ icon, tooltip, onClick }) =>
+        <button type="button"
+                uk-icon={icon}
+                className='uk-icon-button'
+                onClick={onClick}
+                uk-tooltip={tooltip}/>,
 
 
     Footer = ({ children }) => (
@@ -33,25 +39,29 @@ export let
     ),
 
 
-    Select = ({ name, value, defaultValue, options, optionsAssoc, onChange }) =>
-        <select
-            name={name}
-            id={name}
-            className="uk-select uk-form-width-medium"
-            value={value}
-            defaultValue={defaultValue}
-            onChange={onChange}>
+    Select = ({ name, value, defaultValue, options, optionsAssoc, onChange, width }) =>
+        <select name={name}
+                id={name}
+                className={'uk-select uk-form-width-' + (width || 'medium')}
+                value={value}
+                defaultValue={defaultValue}
+                onChange={onChange}>
             {options && options.map(opt =>
                 <option key={opt} value={opt}>{opt.substr(0, 1).toUpperCase() + opt.substr(1)}</option>
             )}
             {optionsAssoc && Object.keys(optionsAssoc).map(key =>
                 <option key={key} value={key}>{optionsAssoc[key]}</option>
             )}
-        </select>;
+        </select>,
+
+    FormComment = ({ children }) => <span className="uk-margin-small-left uk-text-muted">{children}</span>;
 
 
 class Input extends Component {
-    state = { value: this.props.value || '' };
+    state = {
+        value: this.props.value || '',
+        type:  this.props.type || 'text'
+    };
 
     change = ({ target: { value } }) => this.setState({ value });
 
@@ -69,17 +79,17 @@ class Input extends Component {
     }
 
     render() {
-        const { name, type, disabled, width } = this.props;
+        const { name, disabled, width, placeholder } = this.props;
         return (
-            <input
-                className={'uk-input uk-form-width-' + (width || 'small')}
-                name={name}
-                id={name}
-                type={type || 'text'}
-                value={this.state.value}
-                onBlur={this.blur}
-                onChange={this.change}
-                disabled={disabled}
+            <input name={name}
+                   id={name}
+                   type={this.state.type}
+                   className={'uk-input uk-form-width-' + (width || 'small')}
+                   value={this.state.value}
+                   onBlur={this.blur}
+                   onChange={this.change}
+                   disabled={disabled}
+                   placeholder={placeholder}
             />
         )
     }
@@ -115,15 +125,14 @@ class Textarea extends Component {
     render() {
         const { name, disabled } = this.props;
         return (
-            <textarea
-                className="uk-textarea uk-form-width-medium"
-                name={name}
-                id={name}
-                rows={this.props.array && this.props.array.length}
-                onBlur={this.blur}
-                onChange={this.change}
-                disabled={disabled}
-                value={this.state.value}
+            <textarea name={name}
+                      id={name}
+                      className="uk-textarea uk-form-width-medium"
+                      rows={this.props.array && this.props.array.length}
+                      onBlur={this.blur}
+                      onChange={this.change}
+                      disabled={disabled}
+                      value={this.state.value}
             />
         )
     }

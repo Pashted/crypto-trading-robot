@@ -1,8 +1,8 @@
 {
-    "_context": "user",
-    "exchange": "bitfinex",
-    "strategy": "daily",
-    "minStep":  1,
-    "theme":    "dark",
-    "lang":     "en"
+    "_context":  "user",
+    "exchange":  "bitfinex",
+    "strategy":  "daily",
+    "minStep":   1,
+    "theme":     "dark",
+    "lang":      "en"
 }

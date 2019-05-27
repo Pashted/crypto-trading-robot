@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
 
 import Settings from './index'
-import { Row, Select, Input, Button, Textarea } from '../../form'
+import { Row, Select, Input, IconButton, FormComment, Textarea } from '../../form'
 
 import { setTitle } from "../../../helpers"
-
-import { send } from '../../../ws'
 
 import AppContext from '../../Context/AppContext'
 import ExchangeContext from '../../Context/ExchangeContext'
@@ -18,23 +16,11 @@ class Exchange extends Component {
 
         setTitle('Exchange settings');
 
-        this.state = {
-            list: []
-        };
-
     }
 
 
-    async componentDidMount() {
+    componentDidMount() {
         console.log('## Exchange componentDidMount');
-
-        try {
-            let list = await send({ method: 'getExchangesList' });
-            this.setState({ list });
-
-        } catch (err) {
-            console.log(err);
-        }
     }
 
 
@@ -47,19 +33,20 @@ class Exchange extends Component {
         return (
             <Settings desc='Exchange parameters'>
 
-                <AppContext.Consumer>
-                    {({ exchange, setParam }) => (
-                        <Row name='exchange' label='Exchange'>
-                            <Select name='exchange' options={this.state.list} value={exchange} onChange={setParam}/>
-                        </Row>
-                    )}
-                </AppContext.Consumer>
-
                 <ExchangeContext.Consumer>
                     {({ apiKey, fee, timeframes, setParam, resetExchange }) => (
                         <>
+                            <AppContext.Consumer>
+                                {({ exchange, _exchanges, setParam }) => (
+                                    <Row name='exchange' label='Exchange'>
+                                        <Select name='exchange' options={_exchanges} value={exchange} onChange={setParam}/>
+                                        <IconButton tooltip='Reset exchange settings' icon='trash' onClick={resetExchange}/>
+                                    </Row>
+                                )}
+                            </AppContext.Consumer>
+
                             {apiKey !== undefined && <Row name='apiKey' label='Api-Key'>
-                                <Input name='apiKey' value={apiKey} onBlur={setParam} width='medium'/>
+                                <Input type='password' name='apiKey' value={apiKey} onBlur={setParam} width='medium'/>
                             </Row>}
 
                             {fee !== undefined && <Row name='fee' label='Exchange maker fee, %'>
@@ -69,14 +56,10 @@ class Exchange extends Component {
                             {timeframes !== undefined && <Row name='timeframes' label='Timeframes' tooltip='One value on each line'>
                                 <Textarea name='timeframes' array={timeframes} onBlur={setParam}/>
                             </Row>}
-
-                            <Row>
-                                <Button name='Reset this exchange' style='secondary' onClick={resetExchange}/>
-                            </Row>
                         </>
+
                     )}
                 </ExchangeContext.Consumer>
-
             </Settings>
         )
     }

@@ -4,7 +4,7 @@ import { setTitle } from "../../../helpers";
 
 import AppContext from '../../Context/AppContext'
 import ExchangeContext from '../../Context/ExchangeContext'
-import { Row, Select, Input } from "../../form";
+import { Row, Select, Input, FormComment } from "../../form";
 
 
 let Strategy = () => {
@@ -25,7 +25,7 @@ let Strategy = () => {
 
                             <Input name='minStep' value={minStep} onBlur={setParam}/>
                             <ExchangeContext.Consumer>
-                                {({ fee }) => <span className="uk-margin-small-left uk-text-muted">Profit {(minStep - fee * 2).toFixed(2)}%</span>}
+                                {({ fee }) => <FormComment>Profit {(minStep - fee * 2).toFixed(2)}%</FormComment>}
                             </ExchangeContext.Consumer>
                         </Row>}
                     </>

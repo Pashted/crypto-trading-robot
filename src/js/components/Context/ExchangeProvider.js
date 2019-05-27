@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import ExchangeContext, { defaultExSettings } from "./ExchangeContext";
 
-import { getParam } from '../../helpers'
+import { getParam, Notify, filterObject } from '../../helpers'
 import { send } from "../../ws";
 
 
@@ -27,17 +27,77 @@ class ExchangeProvider extends Component {
          */
         resetExchange: async () => {
             try {
-                let res = await send({ method: 'resetExchange', exchange: this.props.exchange });
+                let res = await send({
+                    method:   'resetExchange',
+                    exchange: this.props.exchange
+                });
+
+                Notify.warning('Exchange settings reset complete');
                 console.log('~~ resetExchange', res);
 
                 this.setState(this.defaultState);
 
             } catch (err) {
+                Notify.error(err);
+                console.log(err);
+            }
+        },
+
+        getSymbols: async () => {
+
+            try {
+                let symbols = await send({
+                    method:   'getSymbols',
+                    exchange: this.props.exchange
+                });
+                console.log('~~ getSymbols', symbols);
+
+                if (typeof symbols === 'string') {
+                    Notify.error(symbols);
+
+                } else if (symbols) {
+
+                    this.setState({ symbols }, this.saveExchange);
+                    Notify.message('Symbols updated');
+
+                } else {
+                    Notify.warning('Symbols not found');
+                }
+
+            } catch (err) {
+                Notify.error(err);
+                console.log(err);
+            }
+        },
+
+        getCandles: async () => {
+            try {
+                const candles = await send({
+                    method: 'getCandles',
+                    ...filterObject(this.state, ['exchange', 'pair', 'symbol', 'timeframe', 'start', 'end'])
+                });
+
+                console.log('~~ getCandles', candles);
+
+                if (typeof candles === 'string') {
+                    Notify.error(candles);
+
+                } else if (candles && candles.ohlc && candles.ohlc.length) {
+
+                    this.setState({ candles });
+                    Notify.message('Candles updated');
+
+                } else {
+                    Notify.warning('Candles not found');
+                }
+
+            } catch (err) {
+                Notify.error(err);
                 console.log(err);
             }
         }
-    };
 
+    };
 
     /**
      * Saves exchange's state into db
@@ -45,10 +105,63 @@ class ExchangeProvider extends Component {
      */
     async saveExchange() {
         try {
-            let res = await send({ method: 'setExchangeSettings', data: this.state });
+            let data = { ...this.state };
+            delete data.candles;
+
+            let res = await send({
+                method: 'setExchangeSettings',
+                data
+            });
+            // Notify.message('Exchange saved');
             console.log('~~ saveExchange', res)
 
         } catch (err) {
+            Notify.error(err);
+            console.log(err);
+        }
+    }
+
+
+    // async saveCandles() {
+    //     try {
+    //         let res = await send({
+    //             method: 'setExchangeCandles',
+    //             data:   {
+    //                 exchange: this.state.exchange,
+    //                 pair:     this.state.symbol + this.state.pair,
+    //                 candles:  this.state.candles,
+    //             }
+    //         });
+    //         Notify.message('Candles updated');
+    //         console.log('~~ saveCandles', res)
+    //
+    //     } catch (err) {
+    //         Notify.error(err);
+    //         console.log(err);
+    //     }
+    // }
+
+
+    /**
+     * Get exchange settings, stored in db
+     * @returns {Promise<void>}
+     */
+    async getExchange(exchange) {
+
+        try {
+            let _exchange = await send({
+                method: 'getExchangeSettings',
+                exchange
+            });
+
+            console.log('~~ getExchange', _exchange);
+
+            // if there is saved exchange, apply it
+            this.setState({ exchange, ...defaultExSettings, ..._exchange, ...this.UIMethods });
+
+
+        } catch (err) {
+            Notify.error(err);
             console.log(err);
         }
     }
@@ -67,22 +180,13 @@ class ExchangeProvider extends Component {
      */
     async componentWillReceiveProps(nextProps, nextState) {
         console.log('## ExchangeProvider componentWillReceiveProps',
-            '\n _this.props', this.props,
-            '\n _this.state', this.state,
-            '\n _nextProps', nextProps,
-            '\n _nextState', nextState
+            // '\n _this.props', this.props,
+            // '\n _this.state', this.state,
+            // '\n _nextProps', nextProps,
+            // '\n _nextState', nextState
         );
 
-        try {
-            // get exchange settings, stored in db
-            let _exchange = await send({ method: 'getExchangeSettings', exchange: nextProps.exchange });
-
-            // if there is saved exchange, apply it
-            this.setState(Object.assign({ exchange: nextProps.exchange }, _exchange || defaultExSettings, this.UIMethods));
-
-        } catch (err) {
-            console.log(err);
-        }
+        this.getExchange(nextProps.exchange);
     }
 
 
@@ -99,10 +203,10 @@ class ExchangeProvider extends Component {
 
         console.log(
             '## ExchangeProvider shouldComponentUpdate', willUpdate,
-            '\n _this.props', this.props,
-            '\n _this.state', this.state,
-            '\n _nextProps', nextProps,
-            '\n _nextState', nextState
+            // '\n _this.props', this.props,
+            // '\n _this.state', this.state,
+            // '\n _nextProps', nextProps,
+            // '\n _nextState', nextState
         );
 
         return willUpdate;
@@ -114,7 +218,12 @@ class ExchangeProvider extends Component {
     }
 
 
-    defaultState = Object.assign({ exchange: this.props.exchange }, defaultExSettings, this.UIMethods);
+    defaultState = ({
+        exchange: this.props.exchange,
+        candles:  {},
+        ...defaultExSettings,
+        ...this.UIMethods
+    });
 
     state = this.defaultState;
 
