@@ -7,7 +7,7 @@ let Realtime = () => {
 
     return (
 
-        <Trading desc='Realtime trading with unknown future'>ffhnghm</Trading>
+        <Trading desc='Realtime trading with unknown future' context={{candles:[]}}>...</Trading>
     )
 };
 

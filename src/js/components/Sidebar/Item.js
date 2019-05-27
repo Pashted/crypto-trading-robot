@@ -26,7 +26,7 @@ class Item extends PureComponent {
             className += ' uk-parent';
             url = subSections[0].url;
 
-            if (this.state.isActive)
+            // if (this.state.isActive)
                 className += ' uk-open';
         }
 

@@ -184,7 +184,7 @@ class Chart extends PureComponent {
                 width: 60
             },
 
-            selected: 4
+            selected: 0
         },
 
         title: {
