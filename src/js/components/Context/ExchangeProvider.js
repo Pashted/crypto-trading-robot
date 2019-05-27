@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 
 import ExchangeContext, { defaultExSettings } from "./ExchangeContext";
 
-import { getParam, Notify, filterObject } from '../../helpers'
+import { getParam, filterObject } from '../../helpers'
+import { Notify } from '../../components/uikit'
 import { send } from "../../ws";
 
 

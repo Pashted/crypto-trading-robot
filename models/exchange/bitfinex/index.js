@@ -10,6 +10,8 @@ module.exports = {
 
     key: "",
 
+    limit: 5000, // query results limit
+
     getSymbols() {
         return new Promise(resolve => {
             request.get(
@@ -21,13 +23,13 @@ module.exports = {
                     let data = {},
                         result = JSON.parse(body);
 
-                    console.log('>> EX SYMBOLS result', result);
-
                     if (result.error)
                         throw result.error;
 
                     if (result instanceof Array)
                         result = result[0];
+
+                    console.log('<- Exchange symbols response', result.length, result);
 
                     result.forEach(symbol => {
 
@@ -67,20 +69,38 @@ module.exports = {
                 '1D':  60 * 24,
                 '7D':  60 * 24 * 7,
                 '14D': 60 * 24 * 14,
-                '1M':  60 * 24 * 31,
+                '1M':  60 * 24 * 28,
             },
-            data = {},
-            counter = Math.ceil(diff / multiplies[timeframe] / 5000); // num of requests
+            counter = Math.ceil(diff / multiplies[timeframe] / this.limit), // num of requests
+
+            data = [];
+
+        let TS1 = new Date().getTime();
 
 
         for (let i = 1; i <= counter; i++) {
-            console.log(`-> Request #${i}/${counter}, Start from`, new Date(start).toLocaleString());
+            console.log(`-> Request #${i}/${counter}, Start from`, new Date(start).toISOString().substr(0, 19));
 
             let res = await this.getCandlesGroup({ timeframe, pair, start, end });
-            res.forEach(arr => data[arr[0]] = arr);
+
+            if (!res.length || res[0] === 'error')
+                continue;
+
+            data = [
+                ...data,
+                ...res.filter(new_candle =>
+                    data.reduceRight((add, candle) => add && !candle.includes(new_candle[0]), true) // add new candle if it no includes in the data
+                )
+            ];
+
+            console.log(`<- Got ${data.length} candles`);
 
             start = res.pop()[0] + (multiplies[timeframe] * 60 * 1000); // shift to the next group
         }
+
+        let TS2 = new Date().getTime();
+
+        console.log(`~~ Elapsed time: ${TS2 - TS1}ms`);
 
         return data;
     },
@@ -89,17 +109,17 @@ module.exports = {
     formatCandles(data) {
         let ohlc = [], volume = [];
 
-        Object.keys(data).forEach(ts => {
+        data.forEach(arr => {
             ohlc.push([
-                data[ts][0], // the date
-                data[ts][1], // open
-                data[ts][3], // high
-                data[ts][4], // low
-                data[ts][2]  // close
+                arr[0], // the date
+                arr[1], // open
+                arr[3], // high
+                arr[4], // low
+                arr[2]  // close
             ]);
             volume.push([
-                data[ts][0], // the date
-                data[ts][5]  // the volume
+                arr[0], // the date
+                arr[5]  // the volume
             ])
         });
         return { ohlc, volume };
@@ -118,31 +138,14 @@ module.exports = {
 
         return new Promise(resolve => {
             request.get(
-                this.url + `/candles/trade:${timeframe}:${pair}/hist?limit=5000&start=${start}&end${end}&sort=1`,
+                this.url + `/candles/trade:${timeframe}:${pair}/hist?limit=${this.limit}&start=${start}&end${end}&sort=1`,
                 (error, response, body) => {
                     if (error)
                         throw error;
 
                     let result = JSON.parse(body);
 
-                    console.log(`<- Exchange candles response for ${pair}`, result);
-
-                    // let ohlc = [],
-                    //     volume = [];
-
-                    // result.forEach(candle => {
-                    //     ohlc.push([
-                    //         candle[0], // the date
-                    //         candle[1], // open
-                    //         candle[3], // high
-                    //         candle[4], // low
-                    //         candle[2]  // close
-                    //     ]);
-                    //     volume.push([
-                    //         candle[0], // the date
-                    //         candle[5]  // the volume
-                    //     ])
-                    // });
+                    // console.log(`<- Exchange candles response for ${pair}`, result);
 
                     resolve(result);
                 }

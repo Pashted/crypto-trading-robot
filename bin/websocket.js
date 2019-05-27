@@ -64,25 +64,6 @@ let start = server => {
                         break;
 
 
-                    // case 'setExchangeCandles':
-                    //
-                    //     response.data = await db.set('candles',
-                    //         {
-                    //             exchange: request.data.exchange,
-                    //             pair:     request.data.pair
-                    //         },
-                    //         {
-                    //             pair:     request.data.pair,
-                    //             exchange: request.data.exchange,
-                    //             candles:  request.data.candles,
-                    //         }
-                    //     );
-                    //
-                    //     console.log(request.data.exchange + ' CANDLES SAVE RESULT', response.data);
-                    //
-                    //     break;
-
-
                     case 'resetSettings':
                         response.data = await db.delete('settings');
                         break;

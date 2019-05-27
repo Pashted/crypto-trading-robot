@@ -37,7 +37,8 @@ module.exports = {
 
     resolve: {
         alias: {
-            'uikit-icons': path.resolve('./node_modules/uikit/dist/js/uikit-icons'),
+            'uikit-icons':          path.resolve('./node_modules/uikit/dist/js/uikit-icons'),
+            'highcharts/highstock': path.resolve(`./node_modules/highcharts/highstock.src.js`),
         }
     },
 
