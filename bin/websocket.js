@@ -16,8 +16,9 @@ let start = server => {
 
         // создание строки из объекта перед отправкой
         let send = data => {
-            console.log('>> RESPONSE', data);
-            ws.send(JSON.stringify(data));
+            // console.log('>> RESPONSE', data);
+            data = JSON.stringify(data);
+            ws.send(data);
         };
 
 
@@ -29,14 +30,14 @@ let start = server => {
          */
         ws.on('message', async query => {
 
+            console.log('<< INCOMING REQUEST:', query);
+
             let request = JSON.parse(query),
                 response = {
                     event: request.method,
                     // infinity: request.infinity || false
                 },
                 Exchange;
-
-            console.log('<< INCOMING REQUEST:', request);
 
 
             try {
@@ -62,25 +63,6 @@ let start = server => {
                     case 'setExchangeSettings':
                         response.data = await db.set('settings', { _context: 'exchange', exchange: request.data.exchange }, request.data);
                         break;
-
-
-                    // case 'setExchangeCandles':
-                    //
-                    //     response.data = await db.set('candles',
-                    //         {
-                    //             exchange: request.data.exchange,
-                    //             pair:     request.data.pair
-                    //         },
-                    //         {
-                    //             pair:     request.data.pair,
-                    //             exchange: request.data.exchange,
-                    //             candles:  request.data.candles,
-                    //         }
-                    //     );
-                    //
-                    //     console.log(request.data.exchange + ' CANDLES SAVE RESULT', response.data);
-                    //
-                    //     break;
 
 
                     case 'resetSettings':

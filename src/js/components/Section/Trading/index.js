@@ -42,47 +42,27 @@ class Trading extends Component {
                           }) => {
 
                             let dateEnd = end ? new Date(end) : new Date(),
-                                diff = ((dateEnd - new Date(start)) / 1000);
+                                endTs = dateEnd.getTime(),
+                                startTs = new Date(start).getTime();
 
-                            switch (timeframe) {
-                                case '1m':
-                                    diff /= 60;
-                                    break;
-                                case '5m':
-                                    diff /= 60 * 5;
-                                    break;
-                                case '15m':
-                                    diff /= 60 * 15;
-                                    break;
-                                case '30m':
-                                    diff /= 60 * 30;
-                                    break;
-                                case '1h':
-                                    diff /= 60 * 60;
-                                    break;
-                                case '3h':
-                                    diff /= 60 * 60 * 3;
-                                    break;
-                                case '6h':
-                                    diff /= 60 * 60 * 6;
-                                    break;
-                                case '12h':
-                                    diff /= 60 * 60 * 12;
-                                    break;
-                                case '1D':
-                                    diff /= 60 * 60 * 24;
-                                    break;
-                                case '7D':
-                                    diff /= 60 * 60 * 24 * 7;
-                                    break;
-                                case '14D':
-                                    diff /= 60 * 60 * 24 * 14;
-                                    break;
+                            let diff = (endTs - startTs) / 1000 / 60, // range in minutes
+                                multiplies = {
+                                    '1m':  1,
+                                    '5m':  5,
+                                    '15m': 15,
+                                    '30m': 30,
+                                    '1h':  60,
+                                    '3h':  60 * 3,
+                                    '6h':  60 * 6,
+                                    '12h': 60 * 12,
+                                    '1D':  60 * 24,
+                                    '7D':  60 * 24 * 7,
+                                    '14D': 60 * 24 * 14,
+                                    '1M':  60 * 24 * 28,
+                                },
+                                counter = Math.ceil(diff / multiplies[timeframe] / 5000); // num of requests
 
-                                default:
-                                    diff /= 60 * 60 * 24 * 30.4;
-                            }
-
+                            let symbolsArr = Object.keys(symbols);
 
                             return (
                                 <>
@@ -93,7 +73,7 @@ class Trading extends Component {
                                     </Row>
 
                                     <Row name='symbol' label='Trading pair'>
-                                        <Select name='symbol' options={Object.keys(symbols)} value={symbol} onChange={setParam} width='small'/>
+                                        <Select name='symbol' options={symbolsArr} value={symbol} onChange={setParam} width='small'/>
                                         <Select name='pair' options={symbols[symbol]} value={pair} onChange={setParam} width='small'/>
                                         <IconButton icon='refresh' tooltip='Sync list with exchange' onClick={getSymbols}/>
                                     </Row>
@@ -104,13 +84,16 @@ class Trading extends Component {
 
                                     <Row name='start' label='Period'>
                                         <Input name='start' value={start} onBlur={setParam} width='medium'/>
-                                        <Input name='end' value={end || ''} onBlur={setParam} width='medium' placeholder={end ? '' : dateEnd.toISOString()} disabled={true}/>
-                                        <FormComment>~{Math.ceil(diff)} candles, {Math.ceil(diff / 5000)} req</FormComment>
+                                        <Input name='end' value={end || ''} width='medium' placeholder={end ? '' : dateEnd.toISOString()} disabled={true}/>
+                                        <FormComment>~{Math.ceil(diff / multiplies[timeframe])} candles, {counter} {counter > 1 ? 'requests' : 'request'}</FormComment>
                                     </Row>
 
-                                    <Button name='Get candles' style='secondary' onClick={getCandles}/>
 
-                                    {candles.ohlc && candles.ohlc.length && <Chart ohlc={candles.ohlc || []} volume={candles.volume || []} title={symbol + pair + ', ' + exchange}/>}
+                                    {!symbolsArr.length && <Button name='Get symbols' style='secondary' onClick={getSymbols}/>}
+                                    {!!symbolsArr.length && <Button name='Get candles' style='primary' onClick={getCandles}/>}
+
+                                    {candles.ohlc && candles.ohlc.length &&
+                                    <Chart ohlc={candles.ohlc || []} volume={candles.volume || []} title={symbol + pair + ', ' + exchange}/>}
 
 
                                 </>

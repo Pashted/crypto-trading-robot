@@ -79,7 +79,7 @@ class Input extends Component {
     }
 
     render() {
-        const { name, disabled, width, placeholder } = this.props;
+        const { name, disabled, width, placeholder, tooltip } = this.props;
         return (
             <input name={name}
                    id={name}
@@ -90,6 +90,7 @@ class Input extends Component {
                    onChange={this.change}
                    disabled={disabled}
                    placeholder={placeholder}
+                   uk-tooltip={tooltip}
             />
         )
     }

@@ -4,7 +4,8 @@ import AppContext, { defaultAppSettings } from "./AppContext";
 import ExchangeProvider from "./ExchangeProvider";
 
 import { send } from "../../ws";
-import { getParam, Notify, setTheme } from '../../helpers'
+import { getParam, setTheme } from '../../helpers'
+import { Notify } from '../../components/uikit'
 
 class AppProvider extends Component {
 

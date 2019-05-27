@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 
 import ExchangeContext, { defaultExSettings } from "./ExchangeContext";
 
-import { getParam, Notify, filterObject } from '../../helpers'
+import { getParam, filterObject } from '../../helpers'
+import { Notify } from '../../components/uikit'
 import { send } from "../../ws";
 
 
@@ -58,7 +59,12 @@ class ExchangeProvider extends Component {
                 } else if (symbols) {
 
                     this.setState({ symbols }, this.saveExchange);
-                    Notify.message('Symbols updated');
+
+                    let symbolsArr = Object.keys(symbols);
+                    Notify.message(
+                        `Received ${symbolsArr.length} symbols<br>
+                         with total ${symbolsArr.reduce((total, s) => total + symbols[s].length, 0)} pairs`
+                    );
 
                 } else {
                     Notify.warning('Symbols not found');
@@ -85,7 +91,7 @@ class ExchangeProvider extends Component {
                 } else if (candles && candles.ohlc && candles.ohlc.length) {
 
                     this.setState({ candles });
-                    Notify.message('Candles updated');
+                    Notify.message(`Received ${candles.ohlc.length} candles`);
 
                 } else {
                     Notify.warning('Candles not found');

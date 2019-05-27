@@ -40,7 +40,7 @@ class Exchange extends Component {
                                 {({ exchange, _exchanges, setParam }) => (
                                     <Row name='exchange' label='Exchange'>
                                         <Select name='exchange' options={_exchanges} value={exchange} onChange={setParam}/>
-                                        <IconButton tooltip='Reset exchange settings' icon='trash' onClick={resetExchange}/>
+                                        <IconButton tooltip='Reset exchange settings and data' icon='trash' onClick={resetExchange}/>
                                     </Row>
                                 )}
                             </AppContext.Consumer>
