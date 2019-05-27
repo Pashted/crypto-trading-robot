@@ -1,4 +1,4 @@
-const BFX = require('bitfinex-api-node'),
+const /*BFX = require('bitfinex-api-node'),*/
     request = require('request');
 
 
@@ -10,17 +10,21 @@ module.exports = {
 
     key: "",
 
-    get_symbols() {
+    getSymbols() {
         return new Promise(resolve => {
             request.get(
                 this.url + '/conf/pub:list:pair:exchange',
                 (error, response, body) => {
-                    if (error) throw error;
+                    if (error)
+                        throw error;
 
                     let data = {},
                         result = JSON.parse(body);
 
                     console.log('>> EX SYMBOLS result', result);
+
+                    if (result.error)
+                        throw result.error;
 
                     if (result instanceof Array)
                         result = result[0];
@@ -37,16 +41,70 @@ module.exports = {
                             data[cur].push(pair);
                     });
 
-                    resolve({
-                        params: {
-                            exchange: 'bitfinex'
-                        },
-                        data
-                    });
+                    resolve(data);
                 }
             );
         });
     },
+
+
+    async getCandles({ symbol, pair, timeframe, start, end }) {
+
+        pair = 't' + symbol + pair;
+        start = new Date(start).getTime();
+        end = (end ? new Date(end) : new Date()).getTime();
+
+        let diff = (end - start) / 1000 / 60, // range in minutes
+            multiplies = {
+                '1m':  1,
+                '5m':  5,
+                '15m': 15,
+                '30m': 30,
+                '1h':  60,
+                '3h':  60 * 3,
+                '6h':  60 * 6,
+                '12h': 60 * 12,
+                '1D':  60 * 24,
+                '7D':  60 * 24 * 7,
+                '14D': 60 * 24 * 14,
+                '1M':  60 * 24 * 31,
+            },
+            data = {},
+            counter = Math.ceil(diff / multiplies[timeframe] / 5000); // num of requests
+
+
+        for (let i = 1; i <= counter; i++) {
+            console.log(`-> Request #${i}/${counter}, Start from`, new Date(start).toLocaleString());
+
+            let res = await this.getCandlesGroup({ timeframe, pair, start, end });
+            res.forEach(arr => data[arr[0]] = arr);
+
+            start = res.pop()[0] + (multiplies[timeframe] * 60 * 1000); // shift to the next group
+        }
+
+        return data;
+    },
+
+
+    formatCandles(data) {
+        let ohlc = [], volume = [];
+
+        Object.keys(data).forEach(ts => {
+            ohlc.push([
+                data[ts][0], // the date
+                data[ts][1], // open
+                data[ts][3], // high
+                data[ts][4], // low
+                data[ts][2]  // close
+            ]);
+            volume.push([
+                data[ts][0], // the date
+                data[ts][5]  // the volume
+            ])
+        });
+        return { ohlc, volume };
+    },
+
 
     /**
      * MTS      int     millisecond time stamp
@@ -56,33 +114,41 @@ module.exports = {
      * LOW      float   Lowest execution during the timeframe
      * VOLUME   float   Quantity of symbol traded within the timeframe
      */
-    get_candles(params) {
+    getCandlesGroup({ timeframe, pair, start, end }) {
+
         return new Promise(resolve => {
             request.get(
-                this.url + `/candles/trade:${params.timeframe}:t${params.selectedPair}/hist`,
+                this.url + `/candles/trade:${timeframe}:${pair}/hist?limit=5000&start=${start}&end${end}&sort=1`,
                 (error, response, body) => {
-                    if (error) throw error;
+                    if (error)
+                        throw error;
 
-                    let data = [],
-                        result = JSON.parse(body);
+                    let result = JSON.parse(body);
 
-                    console.log(`>> EX ${params.selectedPair} CANDLES result`, result);
+                    console.log(`<- Exchange candles response for ${pair}`, result);
 
-                    result.forEach(candle => {
-                        data.push({
-                            date:   new Date(candle[0]).toISOString(),
-                            open:   candle[1],
-                            close:  candle[2],
-                            high:   candle[3],
-                            low:    candle[4],
-                            volume: candle[5],
-                        });
-                    });
+                    // let ohlc = [],
+                    //     volume = [];
 
-                    resolve({ params, data: data.reverse() });
+                    // result.forEach(candle => {
+                    //     ohlc.push([
+                    //         candle[0], // the date
+                    //         candle[1], // open
+                    //         candle[3], // high
+                    //         candle[4], // low
+                    //         candle[2]  // close
+                    //     ]);
+                    //     volume.push([
+                    //         candle[0], // the date
+                    //         candle[5]  // the volume
+                    //     ])
+                    // });
+
+                    resolve(result);
                 }
             );
 
         });
     }
+
 };
