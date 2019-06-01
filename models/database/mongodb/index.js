@@ -122,7 +122,7 @@ module.exports = {
 
                         let status = err ? 'error' : 'success';
 
-                        resolve(JSON.stringify({ status }))
+                        resolve(status)
 
                     }
                 );

@@ -1,3 +1,15 @@
+// add timestamps in front of log messages
+require('console-stamp')(console, {
+    pattern: ' HH:MM:ss.l ',
+    label:   false
+});
+
+require('util').inspect.defaultOptions = {
+    depth:          1,
+    maxArrayLength: 10,
+    compact:        true
+};
+
 const express = require('express'),
     path = require('path'),
     cookieParser = require('cookie-parser'),

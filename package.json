@@ -9,6 +9,7 @@
     "dev": "webpack --progress --mode development --watch"
   },
   "dependencies": {
+    "console-stamp": "^0.2.7",
     "cookie-parser": "^1.4.4",
     "debug": "^4.1.1",
     "express": "^4.17.0",

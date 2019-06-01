@@ -47,23 +47,23 @@ class ExchangeProvider extends Component {
         getSymbols: async () => {
 
             try {
-                let symbols = await send({
+                let res = await send({
                     action:   'watcher.Symbols.get',
                     exchange: this.props.exchange
                 });
-                console.log('~~ getSymbols', symbols);
+                console.log('~~ getSymbols', res);
 
-                if (typeof symbols === 'string') {
-                    Notify.error(symbols);
+                if (typeof res === 'string') {
+                    Notify.error(res);
 
-                } else if (symbols) {
+                } else if (res.symbols) {
 
-                    this.setState({ symbols }, this.saveExchange);
+                    this.setState({ symbols: res.symbols }, this.saveExchange);
 
-                    let symbolsArr = Object.keys(symbols);
+                    let symbolsArr = Object.keys(res.symbols);
                     Notify.message(
                         `Received ${symbolsArr.length} symbols<br>
-                         with total ${symbolsArr.reduce((total, s) => total + symbols[s].length, 0)} pairs`
+                         with total ${symbolsArr.reduce((total, s) => total + res.symbols[s].length, 0)} pairs`
                     );
 
                 } else {

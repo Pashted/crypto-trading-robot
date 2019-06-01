@@ -14,9 +14,8 @@ let start = server => {
 
         // creating a string from an object before sending
         let send = data => {
-            console.log('>> RESPONSE', data);
-            let res = JSON.stringify(data);
-            ws.send(res);
+            console.log('>> RESPONSE\n', data);
+            ws.send(JSON.stringify(data));
         };
 
 
@@ -34,7 +33,7 @@ let start = server => {
             let request = JSON.parse(query),
                 response = { data: 'empty response' };
 
-            console.log('<< INCOMING REQUEST:', request);
+            console.log('<< INCOMING REQUEST\n', request);
 
 
             try {

@@ -14,6 +14,7 @@ module.exports = {
 
     getSymbols() {
         return new Promise(resolve => {
+            console.log('-> Request Exchange symbols list...');
             request.get(
                 this.url + '/conf/pub:list:pair:exchange',
                 (error, response, body) => {
@@ -29,7 +30,7 @@ module.exports = {
                     if (result instanceof Array)
                         result = result[0];
 
-                    console.log('<- Exchange symbols response', result.length, result);
+                    console.log(`<- Exchange symbols response ${result.length} items`);
 
                     result.forEach(symbol => {
 
