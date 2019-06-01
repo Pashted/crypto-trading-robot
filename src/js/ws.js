@@ -99,7 +99,7 @@ let off = (name, rejectReason) => {
     if (promiseQueue.hasOwnProperty(name)) {
         // console.log('~~ WS.OFF:', name, rejectReason ? 'REJECTED' : '');
 
-        promiseQueue[name].reject(rejectReason || false);
+        promiseQueue[name].reject(rejectReason || 'rejected without reason');
 
 
         delete promiseQueue[name];
@@ -116,7 +116,7 @@ let off = (name, rejectReason) => {
  */
 let send = data => new Promise((resolve, reject) => {
 
-    on(data.method, { resolve, reject });
+    on(data.action, { resolve, reject });
 
     console.log('>> WS.SEND:', data);
 

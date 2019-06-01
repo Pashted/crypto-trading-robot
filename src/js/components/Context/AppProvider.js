@@ -32,10 +32,12 @@ class AppProvider extends Component {
             try {
                 setTheme(defaultAppSettings.theme);
 
-                let res = await send({ method: 'resetSettings' });
+                let res = await send({
+                    action: 'storage.AppSettings.reset'
+                });
 
                 Notify.warning('Settings reset complete');
-                console.log('~~ resetSettings', res);
+                console.log('~~ AppSettings reset', res);
 
                 this.setState(this.defaultState);
 
@@ -53,10 +55,13 @@ class AppProvider extends Component {
      */
     async saveSettings() {
         try {
-            let res = await send({ method: 'setUserSettings', data: this.state });
+            let res = await send({
+                action: 'storage.AppSettings.set',
+                data:   this.state
+            });
 
             // Notify.message('Settings saved');
-            console.log('~~ saveSettings', res)
+            console.log('~~ AppSettings save', res)
 
         } catch (err) {
             Notify.error(err);
@@ -73,8 +78,8 @@ class AppProvider extends Component {
 
         try {
             Promise.all([
-                send({ method: 'getExchangesList' }),
-                send({ method: 'getUserSettings' })
+                send({ action: 'storage.ExchangesList.get' }),
+                send({ action: 'storage.AppSettings.get' })
             ]).then(data => {
 
                 this.defaultState._exchanges = data[0];
@@ -98,7 +103,7 @@ class AppProvider extends Component {
     }
 
 
-    defaultState = {...defaultAppSettings, ...this.UIMethods};
+    defaultState = { ...defaultAppSettings, ...this.UIMethods };
 
     state = this.defaultState;
 

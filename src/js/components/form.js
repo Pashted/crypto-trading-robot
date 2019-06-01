@@ -11,7 +11,7 @@ export let
         <div className="uk-margin-small">
             {label && <label className="uk-form-label" htmlFor={name} uk-tooltip={tooltip}>{label}</label>}
 
-            <div className="uk-form-controls uk-flex uk-flex-middle">{children}</div>
+            <div className="uk-form-controls uk-flex uk-flex-wrap uk-flex-middle">{children}</div>
         </div>,
 
 

@@ -38,7 +38,8 @@ class Trading extends Component {
                     <ExchangeContext.Consumer>
                         {({
                               setParam, getSymbols, getCandles,
-                              exchange, symbols, candles, symbol, pair, timeframes, timeframe, start, end
+                              exchange, symbols, candles, symbol, pair, timeframes, timeframe, start, end,
+                              deposit
                           }) => {
 
                             let dateEnd = end ? new Date(end) : new Date(),
@@ -67,9 +68,7 @@ class Trading extends Component {
                             return (
                                 <>
                                     <Row name='money' label='Amount of money'>
-                                        0
-                                        {/*<Select name='symbol' options={Object.keys(symbols)} value={symbol} onChange={setParam}/>*/}
-                                        {/*<Select name='pair' options={symbols[symbol]} value={pair} onChange={setParam}/>*/}
+                                        {deposit}
                                     </Row>
 
                                     <Row name='symbol' label='Trading pair'>

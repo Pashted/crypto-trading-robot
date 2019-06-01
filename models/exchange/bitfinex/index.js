@@ -52,7 +52,6 @@ module.exports = {
 
     async getCandles({ symbol, pair, timeframe, start, end }) {
 
-        pair = 't' + symbol + pair;
         start = new Date(start).getTime();
         end = (end ? new Date(end) : new Date()).getTime();
 
@@ -81,7 +80,7 @@ module.exports = {
         for (let i = 1; i <= counter; i++) {
             console.log(`-> Request #${i}/${counter}, Start from`, new Date(start).toISOString().substr(0, 19));
 
-            let res = await this.getCandlesGroup({ timeframe, pair, start, end });
+            let res = await this.getCandlesGroup({ timeframe, pair: symbol + pair, start, end });
 
             if (!res.length || res[0] === 'error')
                 continue;
@@ -106,6 +105,35 @@ module.exports = {
     },
 
 
+    getCandlesGroup({ timeframe, pair, start, end }) {
+
+        return new Promise(resolve => {
+            request.get(
+                this.url + `/candles/trade:${timeframe}:t${pair}/hist?limit=${this.limit}&start=${start}&end${end}&sort=1`,
+                (error, response, body) => {
+                    if (error)
+                        throw error;
+
+                    let result = JSON.parse(body);
+
+                    // console.log(`<- Exchange candles response for ${pair}`, result);
+
+                    resolve(result);
+                }
+            );
+
+        });
+    },
+
+
+    /**
+     * MTS      int     millisecond time stamp
+     * OPEN     float   First execution during the time frame
+     * CLOSE    float   Last execution during the time frame
+     * HIGH     float   Highest execution during the time frame
+     * LOW      float   Lowest execution during the timeframe
+     * VOLUME   float   Quantity of symbol traded within the timeframe
+     */
     formatCandles(data) {
         let ohlc = [], volume = [];
 
@@ -125,33 +153,5 @@ module.exports = {
         return { ohlc, volume };
     },
 
-
-    /**
-     * MTS      int     millisecond time stamp
-     * OPEN     float   First execution during the time frame
-     * CLOSE    float   Last execution during the time frame
-     * HIGH     float   Highest execution during the time frame
-     * LOW      float   Lowest execution during the timeframe
-     * VOLUME   float   Quantity of symbol traded within the timeframe
-     */
-    getCandlesGroup({ timeframe, pair, start, end }) {
-
-        return new Promise(resolve => {
-            request.get(
-                this.url + `/candles/trade:${timeframe}:${pair}/hist?limit=${this.limit}&start=${start}&end${end}&sort=1`,
-                (error, response, body) => {
-                    if (error)
-                        throw error;
-
-                    let result = JSON.parse(body);
-
-                    // console.log(`<- Exchange candles response for ${pair}`, result);
-
-                    resolve(result);
-                }
-            );
-
-        });
-    }
 
 };
