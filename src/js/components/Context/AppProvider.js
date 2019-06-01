@@ -73,23 +73,21 @@ class AppProvider extends Component {
     /**
      * First getting of user and selected exchange settings
      */
-    componentDidMount() {
+    async componentDidMount() {
         console.log('## AppProvider componentDidMount');
 
         try {
-            Promise.all([
-                send({ action: 'storage.ExchangesList.get' }),
-                send({ action: 'storage.AppSettings.get' })
-            ]).then(data => {
+            const settings = await send({ action: 'storage.AppSettings.get' });
 
-                this.defaultState._exchanges = data[0];
 
-                if (data[1])
-                    this.setState({ _exchanges: data[0], ...data[1], ...this.UIMethods }); // if there are saved settings, apply them
-                else
-                    this.setState(this.defaultState);
-            })
+            if (settings) {
+                this.defaultState._exchanges = settings._exchanges;
 
+                this.setState({ ...settings, ...this.UIMethods }); // if there are saved settings, apply them
+
+            } else {
+                this.setState(this.defaultState);
+            }
 
         } catch (err) {
             Notify.error(err);
