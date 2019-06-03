@@ -72,8 +72,8 @@ module.exports = {
                     } else {
 
                         console.log(`<- Exchange response. Candles length: ${result.length}`);
-                        if (result.length)
-                            console.log(...result.map(arr => arr[0]));
+                        // if (result.length)
+                        //     console.log(...result.map(arr => arr[0]));
                         // console.log(...result.map(arr => new Date(arr[0]).toISOString()));
 
                         resolve(result);
@@ -97,19 +97,37 @@ module.exports = {
     formatCandles(data, shift) {
         let ohlc = [], volume = [];
 
-        data.forEach(arr => {
-            ohlc.push([
-                arr[0], // the date
-                arr[1], // open
-                arr[3], // high
-                arr[4], // low
-                arr[2]  // close
-            ]);
-            volume.push([
-                arr[0], // the date
-                arr[5]  // the volume
-            ])
-        });
+        const keys = data.reduce((res, candle) => res = [ ...res, candle[0] ], []),
+            [ stop ] = data.slice(-1)[0];
+
+
+        for (let [ ts ] = data[0]; ts <= stop; ts += shift) {
+
+            const index = keys.indexOf(ts);
+
+
+            if (index >= 0) {
+                ohlc.push([
+                    data[index][0], // the date
+                    data[index][1], // open
+                    data[index][3], // high
+                    data[index][4], // low
+                    data[index][2]  // close
+                ]);
+                volume.push([
+                    data[index][0], // the date
+                    data[index][5]  // the volume
+                ]);
+
+            } else {
+                // if no data performed for this period, get the previous value
+                const [ prev ] = ohlc.slice(-1)[0].slice(-1);
+
+                ohlc.push([ ts, prev, prev, prev, prev ]);
+                volume.push([ ts, 0 ])
+            }
+        }
+
         return { ohlc, volume };
     },
 
