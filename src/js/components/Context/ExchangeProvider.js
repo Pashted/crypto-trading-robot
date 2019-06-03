@@ -36,7 +36,7 @@ class ExchangeProvider extends Component {
                 Notify.warning('Exchange data reset complete');
                 console.log('~~ resetExchange', res);
 
-                // this.setState(this.defaultState);
+                this.setState(this.defaultState);
 
             } catch (err) {
                 Notify.error(err);
