@@ -21,7 +21,7 @@ let connect = () => {
 
             console.log('~~ WS.CONNECT: reject old promise', name);
 
-            off(name);
+            off(name, 'The queue of requests has been cleared due to reconnection');
 
 
             // TODO: save data in the queue for recurring infinity events, to request the data again after the server restarts
@@ -75,19 +75,22 @@ let timer = 0,
  * @param callbacks {Object}
  */
 let on = (name, callbacks) => {
-
-    // re-subscription
-    if (promiseQueue.hasOwnProperty(name))
-        off(name);
-
-
     /**
      * Callbacks are saved to the array in case of reconnection to the server.
      * On the new connection they need to hang up again - this is the "connect" function's area of responsibility.
      */
     // console.log('~~ WS.ON:', name);
 
-    promiseQueue[name] = callbacks;
+    if (promiseQueue.hasOwnProperty(name)) {
+        callbacks.reject("Server is busy. Please wait or look at the server's console.");
+
+        return false;
+
+    } else {
+        promiseQueue[name] = callbacks;
+
+        return true;
+    }
 };
 
 
@@ -118,12 +121,14 @@ let off = (name, rejectReason) => {
  */
 let send = data => new Promise((resolve, reject) => {
 
-    on(data.action, { resolve, reject });
+    if (on(data.action, { resolve, reject })) {
 
-    console.log('>> WS.SEND:', data);
+        console.log('>> WS.SEND:', data);
 
-    // forming a string from an object before sending
-    ws.send(JSON.stringify(data));
+        // forming a string from an object before sending
+        ws.send(JSON.stringify(data));
+    }
+
 });
 
 
