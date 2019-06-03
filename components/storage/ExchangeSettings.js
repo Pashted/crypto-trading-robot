@@ -14,7 +14,7 @@ module.exports = {
     ),
 
     reset: async ({ exchange }) => ({
-        'settings': await db.delete('settings', { _context: 'exchange', exchange }),
-        'candles':  await db.delete('candles', { exchange })
+        settings: await db.delete('settings', { _context: 'exchange', exchange }),
+        candles:  await db.delete('candles', { exchange })
     })
 };

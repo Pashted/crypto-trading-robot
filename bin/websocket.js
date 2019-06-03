@@ -1,5 +1,4 @@
-const WebSocket = require('ws'),
-    WebSocketServer = WebSocket.Server;
+const WebSocketServer = require('ws').Server;
 
 /**
  * Creating a WebSocket server over of http-server

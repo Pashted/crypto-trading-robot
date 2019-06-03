@@ -42,7 +42,8 @@ let connect = () => {
                 // Calling a previously saved event on the client transferring data from the server to it
                 promiseQueue[response.event].resolve(response.data);
 
-                if (!response.infinity)
+                // makes it possible for the client to repeatedly receive responses from the server for the same event
+                if (response.data && !response.data.infinity)
                     off(response.event);
 
             }

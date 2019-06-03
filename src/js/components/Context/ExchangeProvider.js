@@ -33,10 +33,10 @@ class ExchangeProvider extends Component {
                     exchange: this.props.exchange
                 });
 
-                Notify.warning('Exchange settings reset complete');
+                Notify.warning('Exchange data reset complete');
                 console.log('~~ resetExchange', res);
 
-                this.setState(this.defaultState);
+                // this.setState(this.defaultState);
 
             } catch (err) {
                 Notify.error(err);
@@ -79,8 +79,8 @@ class ExchangeProvider extends Component {
         getCandles: async () => {
             try {
                 const candles = await send({
-                    action: 'watcher.Candles.get',
-                    ...filterObject(this.state, ['exchange', 'pair', 'symbol', 'timeframe', 'start', 'end'])
+                    action: 'storage.Candles.get',
+                    ...filterObject(this.state, [ 'exchange', 'pair', 'symbol', 'timeframe', 'start', 'end' ])
                 });
 
                 console.log('~~ getCandles', candles);

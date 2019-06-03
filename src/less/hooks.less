@@ -6,8 +6,31 @@
     .uk-heading-divider;
 }
 
+.hook-nav-default-item {
+    padding-right: @padding-small-padding;
+}
+
 .hook-nav-default-item-active {
     font-weight: 600;
+    background:  @sidebar-active-background;
+    box-shadow:  -40px 0 0 0 @sidebar-active-background;
+}
+
+.hook-nav-sub {
+    font-size: @global-small-font-size;
+}
+
+.uk-nav .uk-parent:not(.uk-open) > ul {
+    display: none;
+}
+
+aside {
+    background: @global-background;
+    box-shadow: -9000px 0 0 9000px @global-background;
+    [uk-icon] {
+        margin:         4px 5px 0 0;
+        vertical-align: top;
+    }
 }
 
 .hook-button {
@@ -35,27 +58,6 @@
         vertical-align: top;
         margin-top:     3px;
         margin-right:   5px;
-    }
-}
-
-.hook-nav-default-item {
-    padding-right: @padding-small-padding;
-}
-
-.hook-nav-sub {
-    font-size: @global-small-font-size;
-}
-
-.uk-nav .uk-parent:not(.uk-open) > ul {
-    display: none;
-}
-
-aside {
-    background: @global-background;
-    box-shadow: -9000px 0 0 9000px @global-background;
-    [uk-icon] {
-        margin:         4px 5px 0 0;
-        vertical-align: top;
     }
 }
 
@@ -90,11 +92,6 @@ aside {
 
 .hook-button-secondary-active {
     border-color: @global-color;
-}
-
-.hook-nav-default-item-active {
-    background: @sidebar-active-background;
-    box-shadow: -40px 0 0 0 @sidebar-active-background;
 }
 
 .hook-form-label {

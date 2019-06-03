@@ -99,7 +99,7 @@ class Chart extends PureComponent {
             buttons:           [
                 {
                     type:         'all',
-                    text:         'All/1m',
+                    text:         'All/1M',
                     dataGrouping: {
                         forced: true,
                         units:  [['month', [1, 3, 6]]]
@@ -107,7 +107,7 @@ class Chart extends PureComponent {
                 }, {
                     type:         'year',
                     count:        3,
-                    text:         '3y/1w',
+                    text:         '3Y/7D',
                     dataGrouping: {
                         forced: true,
                         units:  [['week', [1]]]
@@ -115,7 +115,7 @@ class Chart extends PureComponent {
                 }, {
                     type:         'year',
                     count:        1,
-                    text:         '1y/1d',
+                    text:         '1Y/1D',
                     dataGrouping: {
                         forced: true,
                         units:  [['day', [1]]]
@@ -123,7 +123,7 @@ class Chart extends PureComponent {
                 }, {
                     type:         'month',
                     count:        3,
-                    text:         '3m/12h',
+                    text:         '3M/12h',
                     dataGrouping: {
                         forced: true,
                         units:  [['hour', [12]]]
@@ -131,7 +131,7 @@ class Chart extends PureComponent {
                 }, {
                     type:         'month',
                     count:        1,
-                    text:         '1m/6h',
+                    text:         '1M/6h',
                     dataGrouping: {
                         forced: true,
                         units:  [['hour', [6]]]
@@ -139,7 +139,7 @@ class Chart extends PureComponent {
                 }, {
                     type:         'day',
                     count:        7,
-                    text:         '7d/1h',
+                    text:         '7D/1h',
                     dataGrouping: {
                         forced: true,
                         units:  [['hour', [1]]]
@@ -147,7 +147,7 @@ class Chart extends PureComponent {
                 }, {
                     type:         'day',
                     count:        3,
-                    text:         '3d/30m',
+                    text:         '3D/30m',
                     dataGrouping: {
                         forced: true,
                         units:  [['minute', [30]]]
@@ -155,7 +155,7 @@ class Chart extends PureComponent {
                 }, {
                     type:         'day',
                     count:        1,
-                    text:         '1d/15m',
+                    text:         '1D/15m',
                     dataGrouping: {
                         forced: true,
                         units:  [['minute', [15]]]
