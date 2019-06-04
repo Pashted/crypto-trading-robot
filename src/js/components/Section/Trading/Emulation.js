@@ -47,7 +47,7 @@ class Emulation extends Component {
                                 <Input name='start' value={start} onBlur={setParam} width='medium'/>
                                 <Input name='end' value={end || ''} width='medium' placeholder={end ? '' : dateEnd.toISOString()} disabled={true}/>
                                 <FormComment>
-                                    ~{Math.floor(diff / multiplies[timeframe])} candles, {Math.ceil(diff / multiplies[timeframe] / 1000)} requests
+                                    ~{Math.floor(diff / multiplies[timeframe])} candles, {Math.ceil(diff / multiplies[timeframe] / 5000)} requests
                                 </FormComment>
                             </Row>
 

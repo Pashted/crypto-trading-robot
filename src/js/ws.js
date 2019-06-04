@@ -82,7 +82,7 @@ let on = (name, callbacks) => {
     // console.log('~~ WS.ON:', name);
 
     if (promiseQueue.hasOwnProperty(name)) {
-        callbacks.reject("Server is busy. Please wait or look at the server's console.");
+        callbacks.reject("Server is busy. Please wait or check server's console.");
 
         return false;
 

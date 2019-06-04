@@ -9,7 +9,8 @@ module.exports = {
     url: "https://api-pub.bitfinex.com/v2/",
     ws:  "wss://api-pub.bitfinex.com/ws/2",
 
-    limit: 1000, // query results limit
+    rate:  45 / 60, // max number of queries per minute
+    limit: 5000, // query results length limit
 
     getSymbols() {
         return new Promise((resolve, reject) => {
@@ -67,7 +68,7 @@ module.exports = {
 
                     if (result[0] === 'error') {
                         console.log('<-', result.pop());
-                        resolve(null);
+                        resolve([]);
 
                     } else {
 
@@ -94,29 +95,33 @@ module.exports = {
      * LOW      float   Lowest execution during the timeframe
      * VOLUME   float   Quantity of symbol traded within the timeframe
      */
-    formatCandles(data, shift) {
-        let ohlc = [], volume = [];
+    formatCandles(candles, shift) {
 
-        const keys = data.reduce((res, candle) => res = [ ...res, candle[0] ], []),
-            [ stop ] = data.slice(-1)[0];
-
-
-        for (let [ ts ] = data[0]; ts <= stop; ts += shift) {
-
-            const index = keys.indexOf(ts);
+        // convert data array to object for making empty candles
+        const Values = candles.reduce((res, data) => {
+            data.forEach(candle => res[candle[0]] = candle);
+            return res;
+        }, {});
 
 
-            if (index >= 0) {
+        let [ ts ] = candles[0][0],
+            [ stop ] = candles.slice(-1)[0].slice(-1)[0],
+
+            ohlc = [], volume = [];
+
+        while (ts <= stop) {
+
+            if (Values.hasOwnProperty(ts)) {
                 ohlc.push([
-                    data[index][0], // the date
-                    data[index][1], // open
-                    data[index][3], // high
-                    data[index][4], // low
-                    data[index][2]  // close
+                    Values[ts][0], // the date
+                    Values[ts][1], // open
+                    Values[ts][3], // high
+                    Values[ts][4], // low
+                    Values[ts][2]  // close
                 ]);
                 volume.push([
-                    data[index][0], // the date
-                    data[index][5]  // the volume
+                    Values[ts][0], // the date
+                    Values[ts][5]  // the volume
                 ]);
 
             } else {
@@ -124,8 +129,10 @@ module.exports = {
                 const [ prev ] = ohlc.slice(-1)[0].slice(-1);
 
                 ohlc.push([ ts, prev, prev, prev, prev ]);
-                volume.push([ ts, 0 ])
+                volume.push([ ts, 0 ]);
             }
+
+            ts += shift;
         }
 
         return { ohlc, volume };

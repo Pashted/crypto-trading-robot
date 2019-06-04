@@ -4,6 +4,8 @@ const path = require('path'),
 
 module.exports = {
 
+    bufferLimit: 4, // batch size for queries
+
     /**
      * Get candles from exchange
      * @param request
@@ -82,20 +84,7 @@ module.exports = {
 
 
         if (candles) {
-            // merge with filter of duplicates
-            candles = candles.reduce((result, data) => [
-                ...result,
-                ...data.filter(new_candle => {
-                    // add new candle if it no includes in the result
-                    let res = result.reduceRight((add, candle) => add && !candle.includes(new_candle[0]), true);
-                    if (!res)
-                        console.log('-- Duplication candle caught!', new_candle[0]);
-                    return res;
-                })
-            ], []);
-
             return Exchange.formatCandles(candles, shift);
-
 
         } else {
             throw new Error("Can't get candles from anywhere");
@@ -108,34 +97,30 @@ module.exports = {
      */
     async getFromLeft({ Exchange, timeframe, ticker, start, end, shift }) {
 
-        const stop = end;
+        let data = [],
+            buffer = [],
+            finish = false;
 
-        let data = [];
+        while (!finish) {
+            buffer.push(Exchange.getCandles({ timeframe, ticker, start, end }));
 
-        do {
-            end = start + (shift * Exchange.limit);
+            start += Exchange.limit * shift + shift; // shift to the younger group
+            finish = start >= end;
 
-            // don't ask younger than required
-            if (end > stop)
-                end = stop;
+            // if we reached buffer limit or the loop will finish now
+            if (buffer.length >= this.bufferLimit || finish) {
 
-            const res = await Exchange.getCandles({ timeframe, ticker, start, end });
+                if (!finish) {
+                    console.log(`...${this.bufferLimit / Exchange.rate} seconds delay to avoid ban for spam`);
+                    await new Promise(res => setTimeout(res, this.bufferLimit / Exchange.rate * 1000));
+                }
 
-            // it seems we will not give the data due to some non-critical error
-            if (res === null)
-                break;
+                (await Promise.all(buffer))
+                    .forEach(arr => arr.length && data.push(arr));
 
-            // if there is any trade action happened at this period
-            if (res.length)
-                data.push(res);
-
-
-            // shift to the younger group
-            start = end + shift;
-
-
-        } while (end < stop);
-
+                buffer = [];
+            }
+        }
 
         return data;
     },
