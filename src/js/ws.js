@@ -21,7 +21,7 @@ let connect = () => {
 
             console.log('~~ WS.CONNECT: reject old promise', name);
 
-            off(name, 'The queue of requests has been cleared due to reconnection');
+            off(name, name + ' operation has been rejected due to reconnection');
 
 
             // TODO: save data in the queue for recurring infinity events, to request the data again after the server restarts
@@ -97,14 +97,14 @@ let on = (name, callbacks) => {
 /**
  * Removing subscription to an event
  * @param name {String}
- * @param rejectReason
+ * @param reason
  */
-let off = (name, rejectReason) => {
+let off = (name, reason) => {
 
     if (promiseQueue.hasOwnProperty(name)) {
-        // console.log('~~ WS.OFF:', name, rejectReason ? 'REJECTED' : '');
+        // console.log('~~ WS.OFF:', name, reason || 'no reason');
 
-        promiseQueue[name].reject(rejectReason || 'rejected without reason');
+        promiseQueue[name].reject(reason || `${name} operation has been rejected without reason`);
 
 
         delete promiseQueue[name];
