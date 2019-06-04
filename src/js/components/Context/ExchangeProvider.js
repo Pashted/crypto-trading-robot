@@ -51,6 +51,7 @@ class ExchangeProvider extends Component {
                     action:   'watcher.Symbols.get',
                     exchange: this.props.exchange
                 });
+
                 console.log('~~ getSymbols', res);
 
                 if (typeof res === 'string') {
@@ -76,12 +77,22 @@ class ExchangeProvider extends Component {
             }
         },
 
-        getCandles: async () => {
+        getCandles: async target => {
             try {
+                if (target)
+                    target.setState({ progress: 0 });
+
                 const candles = await send({
                     action: 'storage.Candles.get',
                     ...filterObject(this.state, [ 'exchange', 'pair', 'symbol', 'timeframe', 'start', 'end' ])
+                }, data => {
+                    const { progress } = data;
+                    if (progress)
+                        target.setState({ progress });
                 });
+
+                if (target)
+                    target.setState({ progress: 100 });
 
                 console.log('~~ getCandles', candles);
 
@@ -107,7 +118,7 @@ class ExchangeProvider extends Component {
             try {
                 const candles = await send({
                     action: 'watcher.Candles.getMany',
-                    ...filterObject(this.state, ['exchange', 'pair', 'symbol', 'timeframe', 'start', 'end'])
+                    ...filterObject(this.state, [ 'exchange', 'pair', 'symbol', 'timeframe', 'start', 'end' ])
                 });
 
                 console.log('~~ getCandles', candles);

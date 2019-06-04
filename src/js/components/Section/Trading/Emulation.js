@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Trading from './index'
 
 import { setTitle } from "../../../helpers";
-import { Button, Footer, FormComment, Input, Row, Select, Textarea } from "../../form";
+import { Button, ProgressButton, Footer, FormComment, Input, Row, Select, Textarea } from "../../form";
 
 import ExchangeContext from "../../Context/ExchangeContext";
 import multiplies from "timeframesMultiplies";
@@ -51,7 +51,7 @@ class Emulation extends Component {
                                 </FormComment>
                             </Row>
 
-                            <Button name='Get candles' style='primary' onClick={getCandles}/>
+                            <ProgressButton name='Get candles' style='secondary' onClick={getCandles}/>
 
                             {candles.ohlc && candles.ohlc.length &&
                             <Chart ohlc={candles.ohlc || []} volume={candles.volume || []} title={symbol + pair + ', ' + exchange}/>}

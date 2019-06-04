@@ -13,7 +13,7 @@ let connect = () => {
     return new Promise(resolve => ws.onopen = () => {
 
         /**
-         * Adding the server response handlers to the new connection
+         * Cancel old requests on new connection
          */
         for (let name in promiseQueue) {
             if (!promiseQueue.hasOwnProperty(name))
@@ -29,22 +29,28 @@ let connect = () => {
 
         ws.onclose = reconnect;
 
-        ws.onmessage = event => {
-            if (!event.data)
+        ws.onmessage = e => {
+            if (!e.data)
                 return false;
 
-            let response = JSON.parse(event.data);
+            let response = JSON.parse(e.data);
 
             console.log('<< WS.MESSAGE:', response);
 
             if (response.event && promiseQueue.hasOwnProperty(response.event)) {
 
-                // Calling a previously saved event on the client transferring data from the server to it
-                promiseQueue[response.event].resolve(response.data);
-
                 // makes it possible for the client to repeatedly receive responses from the server for the same event
-                if (response.data && !response.data.infinity)
+                if (response.infinity && promiseQueue[response.event].progress)
+                    promiseQueue[response.event].progress(response.data);
+
+                else {
+                    // Calling a previously saved event on the client transferring data from the server to it
+                    promiseQueue[response.event].resolve(response.data);
+
+                    // ...finish him
                     off(response.event);
+
+                }
 
             }
 
@@ -118,10 +124,11 @@ let off = (name, reason) => {
 /**
  * Sending a message to the server with a response event subscription
  * @param data {Object}
+ * @param onProgress {Function} Optional callback for loop response
  */
-let send = data => new Promise((resolve, reject) => {
+let send = (data, onProgress) => new Promise((resolve, reject) => {
 
-    if (on(data.action, { resolve, reject })) {
+    if (on(data.action, { resolve, reject, progress: onProgress || null })) {
 
         console.log('>> WS.SEND:', data);
 

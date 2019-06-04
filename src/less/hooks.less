@@ -109,6 +109,19 @@ aside {
     }
 }
 
+.button-progress {
+    progress {
+        width: 101%;
+        top:   100%;
+        left:  -1px;
+        &[value="0"] {
+            &::-webkit-progress-value {transition: none}
+            &::-moz-progress-bar {transition: none}
+            &::-ms-fill {transition: none}
+        }
+    }
+}
+
 .highcharts-point-up {
     fill:   #01d145;
     stroke: #01d145;

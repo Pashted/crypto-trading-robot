@@ -57,6 +57,26 @@ export let
     FormComment = ({ children }) => <span className="uk-margin-small-left uk-text-muted">{children}</span>;
 
 
+class ProgressButton extends Component {
+
+    state = { progress: 0 };
+
+    render() {
+        const { name, style, onClick, disabled } = this.props;
+
+        return (
+            <button type="button"
+                    className={'button-progress uk-panel uk-button uk-margin-small-right uk-button-' + (style || 'default')}
+                    onClick={() => onClick(this)}
+                    disabled={disabled}>
+                {name}
+                <progress className="uk-position-absolute uk-progress" value={this.state.progress} max="100"/>
+            </button>
+        );
+    }
+}
+
+
 class Input extends Component {
     state = {
         value: this.props.value || '',
@@ -140,4 +160,4 @@ class Textarea extends Component {
 }
 
 
-export { Input, Textarea };
+export { ProgressButton, Input, Textarea };

@@ -12,7 +12,7 @@ let start = server => {
 
 
         // creating a string from an object before sending
-        let send = data => {
+        let _send = data => {
             console.log('>> RESPONSE\n', data);
             ws.send(JSON.stringify(data));
         };
@@ -39,9 +39,9 @@ let start = server => {
 
                 response.event = request.action;
 
-                const [com, context, method] = request.action.split('.');
+                const [ com, context, method ] = request.action.split('.');
 
-                response.data = await require(`../components/${com}/${context}`)[method](request);
+                response.data = await require(`../components/${com}/${context}`)[method]({ ...request, _send });
 
 
             } catch (err) {
@@ -53,7 +53,7 @@ let start = server => {
             if (response.data && response.data._id)
                 delete response.data._id;
 
-            send(response);
+            _send(response);
 
         });
 
