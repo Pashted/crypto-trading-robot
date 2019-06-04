@@ -77,22 +77,12 @@ class ExchangeProvider extends Component {
             }
         },
 
-        getCandles: async target => {
+        getCandles: async onProgress => {
             try {
-                if (target)
-                    target.setState({ progress: 0 });
-
                 const candles = await send({
                     action: 'storage.Candles.get',
                     ...filterObject(this.state, [ 'exchange', 'pair', 'symbol', 'timeframe', 'start', 'end' ])
-                }, data => {
-                    const { progress } = data;
-                    if (progress)
-                        target.setState({ progress });
-                });
-
-                if (target)
-                    target.setState({ progress: 100 });
+                }, onProgress);
 
                 console.log('~~ getCandles', candles);
 

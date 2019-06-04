@@ -59,16 +59,39 @@ export let
 
 class ProgressButton extends Component {
 
-    state = { progress: 0 };
+    state = {
+        progress: 0,
+        disabled: this.props.disabled
+    };
+
+    onProgress = async () => {
+
+        if (this.state.progress > 0 && this.state.progress < 100)
+            return false;
+
+        this.setState({ progress: 0, disabled: true });
+
+        await this.props.onClick(this.tick);
+
+        await new Promise(res => setTimeout(res, 500));
+
+        this.setState({ progress: 100, disabled: this.props.disabled });
+
+    };
+
+    tick = ({ progress }) => {
+        if (progress)
+            this.setState({ progress });
+    };
 
     render() {
-        const { name, style, onClick, disabled } = this.props;
+        const { name, style } = this.props;
 
         return (
             <button type="button"
                     className={'button-progress uk-panel uk-button uk-margin-small-right uk-button-' + (style || 'default')}
-                    onClick={() => onClick(this)}
-                    disabled={disabled}>
+                    onClick={this.onProgress}
+                    disabled={this.state.disabled}>
                 {name}
                 <progress className="uk-position-absolute uk-progress" value={this.state.progress} max="100"/>
             </button>

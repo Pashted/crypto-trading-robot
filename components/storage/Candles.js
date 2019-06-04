@@ -17,14 +17,23 @@ module.exports = {
         let start = new Date(request.start).getTime(), // convert date fields to timestamp
             end = (request.end ? new Date(request.end) : new Date()).getTime();
 
-        const { exchange, symbol, pair, timeframe } = request,
-            Exchange = require(path.resolve(__dirname, `../../models/exchange/${exchange}`)),
+        const { exchange, _send, action, symbol, pair, timeframe } = request,
             ticker = symbol + pair,
+
+            Exchange = require(path.resolve(__dirname, `../../models/exchange/${exchange}`)),
 
             filter = { exchange, ticker, timeframe },
             sort = { start: 1 },
 
-            shift = multiplies[timeframe] * 60000; // expected length of 1 candle in timestamp format
+            shift = multiplies[timeframe] * 60000, // expected length of 1 candle in timestamp format
+
+            tick = progress => _send({
+                event:    action,
+                infinity: true,
+                data:     { progress }
+            }),
+
+            params = { Exchange, tick, ticker, filter, start, end, shift };
 
 
         // get saved candles
@@ -33,7 +42,7 @@ module.exports = {
 
         if (!candles) {
             // if db has not any candle for this context, get them all from exchange
-            candles = await this.getFromLeft({ ...request, ticker, start, end, shift, Exchange, filter });
+            candles = await this.getFromLeft({ ...request, ...params });
 
 
         } else {
@@ -58,12 +67,12 @@ module.exports = {
 
             // if client asked older candles
             if (start < savedStart)
-                leftCandles = await this.getFromLeft({ ...request, ticker, start, end: savedStart, shift, Exchange, filter });
+                leftCandles = await this.getFromLeft({ ...request, ...params, start, end: savedStart });
 
 
             // if client asked younger candles
             if (savedEnd < end)
-                rightCandles = await this.getFromLeft({ ...request, ticker, start: savedEnd, end, shift, Exchange, filter });
+                rightCandles = await this.getFromLeft({ ...request, ...params, start: savedEnd, end });
 
 
             //  merge new candles groups with the rest
@@ -71,6 +80,7 @@ module.exports = {
 
         }
 
+        tick(100);
 
         if (candles) {
             return Exchange.formatCandles(candles, shift);
@@ -84,7 +94,7 @@ module.exports = {
     /**
      * Get candles from start to end
      */
-    async getFromLeft({ Exchange, _send, action, filter, timeframe, ticker, start, end, shift }) {
+    async getFromLeft({ Exchange, tick, filter, timeframe, ticker, start, end, shift }) {
 
         let data = [],
             buffer = [],
@@ -117,15 +127,8 @@ module.exports = {
 
                 data = [ ...data, ...candles ];
 
-
                 // tell client current progress
-                _send({
-                    event:    action,
-                    infinity: true,
-                    data:     {
-                        progress: Math.round(progress / expected * 100)
-                    }
-                });
+                tick(Math.round(progress / expected * 100));
 
                 buffer = [];
             }

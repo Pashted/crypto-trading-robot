@@ -128,7 +128,9 @@ let off = (name, reason) => {
  */
 let send = (data, onProgress) => new Promise((resolve, reject) => {
 
-    if (on(data.action, { resolve, reject, progress: onProgress || null })) {
+    const progress = typeof onProgress === 'function' ? onProgress : null;
+
+    if (on(data.action, { resolve, reject, progress })) {
 
         console.log('>> WS.SEND:', data);
 
