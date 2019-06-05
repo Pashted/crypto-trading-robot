@@ -57,7 +57,7 @@ let connect = () => {
         };
 
         console.log('<< WS.CONNECT - READY');
-        timer = 0;
+        timer = 1;
 
         resolve();
     });
@@ -67,9 +67,9 @@ let connect = () => {
 /**
  * Reconnect when disconnected from server
  */
-let timer = 0,
+let timer = 1,
     reconnect = () => {
-        console.log(`~~ WS.RECONNECT: Connection lost. Reconnect in ${++timer} sec...`);
+        console.log(`~~ WS.RECONNECT: Connection lost. Reconnect in ${timer} sec...`);
 
         setTimeout(connect, timer * 1000);
     };
