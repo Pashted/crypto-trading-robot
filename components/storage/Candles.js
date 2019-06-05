@@ -37,7 +37,11 @@ module.exports = {
 
 
         // get saved candles
-        let candles = await db.get('candles', filter, sort);
+        let candles = await db.get('candles', {
+            ...filter,
+            start: { $lte: end },
+            end:   { $gte: start },
+        }, sort);
 
 
         if (!candles) {
