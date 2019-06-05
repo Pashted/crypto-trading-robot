@@ -6,33 +6,41 @@ import AppContext from '../Context/AppContext';
 
 import { mergeDeep } from '../../helpers'
 
-let groupingUnits = [
-    /*[
-        'millisecond', // unit name
-        [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-    ], [
-        'second', // 1
-        [1, 2, 5, 10, 15, 30]
-    ], */[
-        'minute',
-        [1, 5, 15, 30]
-    ], [
-        'hour',
-        [1, 3, 6, 12]
-    ], [
-        'day',
-        [1]
-    ], [
-        'week',
-        [1]
-    ], /*[
-        'month',
-        [1, 3, 6]
-    ], [
-        'year',
-        null
-    ]*/
-];
+// groupingUnits
+const units = [
+        [
+            'minute',
+            [ 1, 5, 15, 30 ]
+        ], [
+            'hour',
+            [ 1, 3, 6, 12 ]
+        ], [
+            'day',
+            [ 1 ]
+        ], [
+            'week',
+            [ 1, 2 ]
+        ], [
+            'month',
+            [ 1 ]
+        ]
+    ],
+
+    // preselect zoom values for each timeframe
+    cases = {
+        "1m":  9,
+        "5m":  8,
+        "15m": 7,
+        "30m": 6,
+        "1h":  5,
+        "3h":  4,
+        "6h":  4,
+        "12h": 3,
+        "1D":  2,
+        "7D":  1,
+        "14D": 0,
+        "1M":  0,
+    };
 
 
 class Chart extends PureComponent {
@@ -45,7 +53,7 @@ class Chart extends PureComponent {
         this.setState(
             mergeDeep(
                 require(`./${this.context.theme}-theme.js`).default,
-                this.defaultState
+                this.state
             )
         );
     }
@@ -53,18 +61,25 @@ class Chart extends PureComponent {
     componentDidMount() {
         console.log('## Chart componentDidMount', this.state);
 
-        Highcharts.charts.pop().reflow();
+        Highcharts.charts.slice(-1)[0].reflow();
     }
 
-    componentWillReceiveProps(nextProps, nextState) {
+    componentWillReceiveProps(nextProps) {
         console.log('## Chart componentWillReceiveProps',
             '\n _this.props', this.props,
             '\n _this.state', this.state,
-            '\n _nextProps', nextProps,
-            '\n _nextState', nextState
+            '\n _nextProps', nextProps
         );
 
         let state = {};
+
+        if (this.props.timeframe !== nextProps.timeframe) {
+            this.defaultState.rangeSelector.selected = cases[nextProps.timeframe];
+            state.rangeSelector = {
+                ...this.state.rangeSelector,
+                selected: cases[nextProps.timeframe]
+            };
+        }
 
         if (this.props.title !== nextProps.title)
             state.title = { text: nextProps.title };
@@ -72,11 +87,11 @@ class Chart extends PureComponent {
         if (this.props.ohlc !== nextProps.ohlc)
             state.series = [
                 {
-                    ...this.defaultState.series[0],
+                    ...this.state.series[0],
                     data: nextProps.ohlc
                 },
                 {
-                    ...this.defaultState.series[1],
+                    ...this.state.series[1],
                     data: nextProps.volume
                 }
             ];
@@ -98,93 +113,52 @@ class Chart extends PureComponent {
             allButtonsEnabled: true,
             buttons:           [
                 {
-                    type:         'all',
-                    text:         'All/1M',
-                    dataGrouping: {
-                        forced: true,
-                        units:  [['month', [1, 3, 6]]]
-                    }
+                    type: 'all',
+                    text: 'All'
                 }, {
-                    type:         'year',
-                    count:        3,
-                    text:         '3Y/7D',
-                    dataGrouping: {
-                        forced: true,
-                        units:  [['week', [1]]]
-                    }
+                    type:  'year',
+                    count: 3,
+                    text:  '3Y'
                 }, {
-                    type:         'year',
-                    count:        1,
-                    text:         '1Y/1D',
-                    dataGrouping: {
-                        forced: true,
-                        units:  [['day', [1]]]
-                    }
+                    type:  'year',
+                    count: 1,
+                    text:  '1Y'
                 }, {
-                    type:         'month',
-                    count:        3,
-                    text:         '3M/12h',
-                    dataGrouping: {
-                        forced: true,
-                        units:  [['hour', [12]]]
-                    }
+                    type:  'month',
+                    count: 3,
+                    text:  '3M'
                 }, {
-                    type:         'month',
-                    count:        1,
-                    text:         '1M/6h',
-                    dataGrouping: {
-                        forced: true,
-                        units:  [['hour', [6]]]
-                    }
+                    type:  'month',
+                    count: 1,
+                    text:  '1M'
                 }, {
-                    type:         'day',
-                    count:        7,
-                    text:         '7D/1h',
-                    dataGrouping: {
-                        forced: true,
-                        units:  [['hour', [1]]]
-                    }
+                    type:  'day',
+                    count: 7,
+                    text:  '7D'
                 }, {
-                    type:         'day',
-                    count:        3,
-                    text:         '3D/30m',
-                    dataGrouping: {
-                        forced: true,
-                        units:  [['minute', [30]]]
-                    }
+                    type:  'day',
+                    count: 3,
+                    text:  '3D'
                 }, {
-                    type:         'day',
-                    count:        1,
-                    text:         '1D/15m',
-                    dataGrouping: {
-                        forced: true,
-                        units:  [['minute', [15]]]
-                    }
+                    type:  'day',
+                    count: 1,
+                    text:  '1D'
                 }, {
-                    type:         'hour',
-                    count:        12,
-                    text:         '6h/5m',
-                    dataGrouping: {
-                        forced: true,
-                        units:  [['minute', [5]]]
-                    }
-                },
-                {
-                    type:         'hour',
-                    count:        2,
-                    text:         '1h/1m',
-                    dataGrouping: {
-                        forced: true,
-                        units:  [['minute', [1]]]
-                    }
+                    type:  'hour',
+                    count: 6,
+                    text:  '6h'
+                }, {
+                    type:  'hour',
+                    count: 1,
+                    text:  '1h'
                 },
             ],
 
             buttonTheme: {
-                width: 60
+                width: 40
             },
 
-            selected: 0
+            selected: cases[this.props.timeframe]
         },
 
         title: {
@@ -230,18 +204,14 @@ class Chart extends PureComponent {
                 type:         "candlestick",
                 name:         "Price",
                 data:         this.props.ohlc,
-                dataGrouping: {
-                    units: groupingUnits
-                }
+                dataGrouping: { units }
             },
             {
                 type:         "column",
                 name:         "Volume",
                 data:         this.props.volume,
                 yAxis:        1,
-                dataGrouping: {
-                    units: groupingUnits
-                }
+                dataGrouping: { units }
             }
         ]
     };
