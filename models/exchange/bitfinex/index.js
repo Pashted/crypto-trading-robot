@@ -64,6 +64,9 @@ module.exports = {
                     if (error)
                         reject(error);
 
+                    if (body === undefined)
+                        reject('Bad response from exchange');
+
                     let result = JSON.parse(body);
 
                     if (result[0] === 'error') {
@@ -73,9 +76,6 @@ module.exports = {
                     } else {
 
                         console.log(`<- Exchange responded. Candles length: ${result.length}`);
-                        // if (result.length)
-                        //     console.log(...result.map(arr => arr[0]));
-                        // console.log(...result.map(arr => new Date(arr[0]).toISOString()));
 
                         resolve(result);
 
