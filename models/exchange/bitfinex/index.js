@@ -72,7 +72,7 @@ module.exports = {
 
                     } else {
 
-                        console.log(`<- Exchange response. Candles length: ${result.length}`);
+                        console.log(`<- Exchange responded. Candles length: ${result.length}`);
                         // if (result.length)
                         //     console.log(...result.map(arr => arr[0]));
                         // console.log(...result.map(arr => new Date(arr[0]).toISOString()));
@@ -97,42 +97,47 @@ module.exports = {
      */
     formatCandles(candles, shift) {
 
-        // convert data array to object for making empty candles
-        const Values = candles.reduce((res, data) => {
-            data.forEach(candle => res[candle[0]] = candle);
-            return res;
-        }, {});
+        let ohlc = [], volume = [],
 
-
-        let [ ts ] = candles[0][0],
-            [ stop ] = candles.slice(-1)[0].slice(-1)[0],
-
-            ohlc = [], volume = [];
+            keys = Object.keys(candles),
+            [ ts ] = keys,
+            [ stop ] = keys.slice(-1);
 
         while (ts <= stop) {
 
-            if (Values.hasOwnProperty(ts)) {
-                ohlc.push([
-                    Values[ts][0], // the date
-                    Values[ts][1], // open
-                    Values[ts][3], // high
-                    Values[ts][4], // low
-                    Values[ts][2]  // close
-                ]);
-                volume.push([
-                    Values[ts][0], // the date
-                    Values[ts][5]  // the volume
-                ]);
+            const [ date, open, close, high, low, vol ] = candles[ts];
+
+            if (candles.hasOwnProperty(ts)) {
+                ohlc.push([ date, open, high, low, close ]);
+                volume.push([ date, vol ]);
 
             } else {
                 // if no data performed for this period, get the previous value
                 const [ prev ] = ohlc.slice(-1)[0].slice(-1);
 
-                ohlc.push([ ts, prev, prev, prev, prev ]);
-                volume.push([ ts, 0 ]);
+                ohlc.push([ date, prev, prev, prev, prev ]);
+                volume.push([ date, 0 ]);
             }
 
             ts += shift;
+        }
+
+        return { ohlc, volume };
+    },
+
+
+    formatMonthCandles(candles) {
+
+        let ohlc = [], volume = [];
+
+        for (const ts in candles) {
+            if (!candles.hasOwnProperty(ts))
+                continue;
+
+            const [ date, open, close, high, low, vol ] = candles[ts];
+
+            ohlc.push([ date, open, high, low, close ]);
+            volume.push([ date, vol ]);
         }
 
         return { ohlc, volume };
