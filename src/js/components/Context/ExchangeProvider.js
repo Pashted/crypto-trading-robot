@@ -11,7 +11,7 @@ class ExchangeProvider extends Component {
 
     /**
      * Methods used by children components for changing states
-     * @type {{setParam: ExchangeProvider.UIMethods.setParam, resetExchange: ExchangeProvider.UIMethods.resetExchange}}
+     * @type {{getManyCandles: ExchangeProvider.UIMethods.getManyCandles, getSymbols: ExchangeProvider.UIMethods.getSymbols, setParam: ExchangeProvider.UIMethods.setParam, resetExchange: ExchangeProvider.UIMethods.resetExchange, getCandles: ExchangeProvider.UIMethods.getCandles}}
      */
     UIMethods = {
         /**
@@ -29,11 +29,11 @@ class ExchangeProvider extends Component {
         resetExchange: async () => {
             try {
                 let res = await send({
-                    method:   'resetExchange',
+                    action:   'storage.ExchangeSettings.reset',
                     exchange: this.props.exchange
                 });
 
-                Notify.warning('Exchange settings reset complete');
+                Notify.warning('Exchange data reset complete');
                 console.log('~~ resetExchange', res);
 
                 this.setState(this.defaultState);
@@ -47,23 +47,24 @@ class ExchangeProvider extends Component {
         getSymbols: async () => {
 
             try {
-                let symbols = await send({
-                    method:   'getSymbols',
+                let res = await send({
+                    action:   'watcher.Symbols.get',
                     exchange: this.props.exchange
                 });
-                console.log('~~ getSymbols', symbols);
 
-                if (typeof symbols === 'string') {
-                    Notify.error(symbols);
+                console.log('~~ getSymbols', res);
 
-                } else if (symbols) {
+                if (typeof res === 'string') {
+                    Notify.error(res);
 
-                    this.setState({ symbols }, this.saveExchange);
+                } else if (res.symbols) {
 
-                    let symbolsArr = Object.keys(symbols);
+                    this.setState({ symbols: res.symbols }, this.saveExchange);
+
+                    let symbolsArr = Object.keys(res.symbols);
                     Notify.message(
                         `Received ${symbolsArr.length} symbols<br>
-                         with total ${symbolsArr.reduce((total, s) => total + symbols[s].length, 0)} pairs`
+                         with total ${symbolsArr.reduce((total, s) => total + res.symbols[s].length, 0)} pairs`
                     );
 
                 } else {
@@ -76,11 +77,38 @@ class ExchangeProvider extends Component {
             }
         },
 
-        getCandles: async () => {
+        getCandles: async onProgress => {
             try {
                 const candles = await send({
-                    method: 'getCandles',
-                    ...filterObject(this.state, ['exchange', 'pair', 'symbol', 'timeframe', 'start', 'end'])
+                    action: 'storage.Candles.get',
+                    ...filterObject(this.state, [ 'exchange', 'pair', 'symbol', 'timeframe', 'start', 'end' ])
+                }, onProgress);
+
+                console.log('~~ getCandles', candles);
+
+                if (typeof candles === 'string') {
+                    Notify.error(candles);
+
+                } else if (candles && candles.ohlc && candles.ohlc.length) {
+
+                    this.setState({ candles });
+                    Notify.message(`Received ${candles.ohlc.length} candles`);
+
+                } else {
+                    Notify.warning('Candles not found');
+                }
+
+            } catch (err) {
+                Notify.error(err);
+                console.log(err);
+            }
+        },
+
+        getManyCandles: async () => {
+            try {
+                const candles = await send({
+                    action: 'watcher.Candles.getMany',
+                    ...filterObject(this.state, [ 'exchange', 'pair', 'symbol', 'timeframe', 'start', 'end' ])
                 });
 
                 console.log('~~ getCandles', candles);
@@ -115,7 +143,7 @@ class ExchangeProvider extends Component {
             delete data.candles;
 
             let res = await send({
-                method: 'setExchangeSettings',
+                action: 'storage.ExchangeSettings.set',
                 data
             });
             // Notify.message('Exchange saved');
@@ -128,26 +156,6 @@ class ExchangeProvider extends Component {
     }
 
 
-    // async saveCandles() {
-    //     try {
-    //         let res = await send({
-    //             method: 'setExchangeCandles',
-    //             data:   {
-    //                 exchange: this.state.exchange,
-    //                 pair:     this.state.symbol + this.state.pair,
-    //                 candles:  this.state.candles,
-    //             }
-    //         });
-    //         Notify.message('Candles updated');
-    //         console.log('~~ saveCandles', res)
-    //
-    //     } catch (err) {
-    //         Notify.error(err);
-    //         console.log(err);
-    //     }
-    // }
-
-
     /**
      * Get exchange settings, stored in db
      * @returns {Promise<void>}
@@ -156,7 +164,7 @@ class ExchangeProvider extends Component {
 
         try {
             let _exchange = await send({
-                method: 'getExchangeSettings',
+                action: 'storage.ExchangeSettings.get',
                 exchange
             });
 

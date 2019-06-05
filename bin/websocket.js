@@ -1,10 +1,7 @@
-const WebSocket = require('ws'),
-    WebSocketServer = WebSocket.Server,
-    db = require('../models/database/mongodb');
-
+const WebSocketServer = require('ws').Server;
 
 /**
- * Создание websocket-сервера поверх http-сервера
+ * Creating a WebSocket server over of http-server
  * @param server
  */
 let start = server => {
@@ -14,114 +11,38 @@ let start = server => {
     socket.on('connection', async ws => {
 
 
-        // создание строки из объекта перед отправкой
-        let send = data => {
-            // console.log('>> RESPONSE', data);
-            data = JSON.stringify(data);
-            ws.send(data);
+        // creating a string from an object before sending
+        let _send = data => {
+            console.log('>> RESPONSE\n', data);
+            ws.send(JSON.stringify(data));
         };
 
 
         console.log('<< USER CONNECTED');
 
-
         /**
-         * Обработка входящих запросов
+         * Processing incoming requests
+         * Minimal requirements to request format = { action: "com.context.method" }
+         * com - component
+         * context - component's separate file
+         * method - component's function
          */
         ws.on('message', async query => {
 
-            console.log('<< INCOMING REQUEST:', query);
-
             let request = JSON.parse(query),
-                response = {
-                    event: request.method,
-                    // infinity: request.infinity || false
-                },
-                Exchange;
+                response = { data: 'empty response' };
+
+            console.log('<< INCOMING REQUEST\n', request);
 
 
             try {
-                switch (request.method) {
 
-                    case 'getUserSettings':
-                        response.data = await db.get('settings', { _context: 'user' });
-                        break;
+                response.event = request.action;
 
-                    case 'setUserSettings':
-                        response.data = await db.set('settings', { _context: 'user' }, request.data);
-                        break;
+                const [ com, context, method ] = request.action.split('.');
 
+                response.data = await require(`../components/${com}/${context}`)[method]({ ...request, _send });
 
-                    case 'getExchangesList':
-                        response.data = require('../models/exchange');
-                        break;
-
-                    case 'getExchangeSettings':
-                        response.data = await db.get('settings', { _context: 'exchange', exchange: request.exchange });
-                        break;
-
-                    case 'setExchangeSettings':
-                        response.data = await db.set('settings', { _context: 'exchange', exchange: request.data.exchange }, request.data);
-                        break;
-
-
-                    case 'resetSettings':
-                        response.data = await db.delete('settings');
-                        break;
-
-                    case 'resetExchange':
-                        response.data = {
-                            'settings': await db.delete('settings', { _context: 'exchange', exchange: request.exchange }),
-                            'candles':  await db.delete('candles', { exchange: request.exchange })
-                        };
-                        break;
-
-                    case 'getSymbols':
-                        Exchange = require(`../models/exchange/${request.exchange}`);
-
-                        response.data = await Exchange.getSymbols();
-                        console.log(response.data);
-                        break;
-
-                    case 'getCandles':
-                        let { exchange, symbol, pair, timeframe } = request;
-                        pair = symbol + pair;
-
-                        Exchange = require(`../models/exchange/${exchange}`);
-
-                        let candles = await db.get('candles', { exchange, pair, timeframe });
-
-                        console.log('db.get.candles', candles);
-
-                        if (candles) {
-                            candles = candles.data;
-
-                        } else {
-                            candles = await Exchange.getCandles(request);
-
-                            db.set(
-                                'candles',
-                                { exchange, pair, timeframe },
-                                { exchange, pair, timeframe, data: candles }
-                            );
-                        }
-
-                        if (candles) {
-                            response.data = Exchange.formatCandles(candles);
-
-
-                        } else {
-                            response.status = 'error';
-                            response.data = "Can't get candles from anywhere";
-                        }
-
-                        break;
-
-
-                    default:
-                        response.status = 'empty response';
-
-                }
 
             } catch (err) {
                 response.data = err.message;
@@ -132,7 +53,7 @@ let start = server => {
             if (response.data && response.data._id)
                 delete response.data._id;
 
-            send(response);
+            _send(response);
 
         });
 

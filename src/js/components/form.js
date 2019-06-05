@@ -11,7 +11,7 @@ export let
         <div className="uk-margin-small">
             {label && <label className="uk-form-label" htmlFor={name} uk-tooltip={tooltip}>{label}</label>}
 
-            <div className="uk-form-controls uk-flex uk-flex-middle">{children}</div>
+            <div className="uk-form-controls uk-flex uk-flex-wrap uk-flex-middle">{children}</div>
         </div>,
 
 
@@ -55,6 +55,49 @@ export let
         </select>,
 
     FormComment = ({ children }) => <span className="uk-margin-small-left uk-text-muted">{children}</span>;
+
+
+class ProgressButton extends Component {
+
+    state = {
+        progress: 0,
+        disabled: this.props.disabled
+    };
+
+    onProgress = async () => {
+
+        if (this.state.progress > 0 && this.state.progress < 100)
+            return false;
+
+        this.setState({ progress: 0, disabled: true });
+
+        await this.props.onClick(this.tick);
+
+        await new Promise(res => setTimeout(res, 500));
+
+        this.setState({ progress: 100, disabled: this.props.disabled });
+
+    };
+
+    tick = ({ progress }) => {
+        if (progress)
+            this.setState({ progress });
+    };
+
+    render() {
+        const { name, style } = this.props;
+
+        return (
+            <button type="button"
+                    className={'button-progress uk-panel uk-button uk-margin-small-right uk-button-' + (style || 'default')}
+                    onClick={this.onProgress}
+                    disabled={this.state.disabled}>
+                {name}
+                <progress className="uk-position-absolute uk-progress" value={this.state.progress} max="100"/>
+            </button>
+        );
+    }
+}
 
 
 class Input extends Component {
@@ -140,4 +183,4 @@ class Textarea extends Component {
 }
 
 
-export { Input, Textarea };
+export { ProgressButton, Input, Textarea };

@@ -29,9 +29,10 @@ module.exports = {
      * @description Gets data from DB collection
      * @param collectionName
      * @param filter
+     * @param sort
      * @returns {Promise}
      */
-    async get(collectionName, filter) {
+    async get(collectionName, filter, sort) {
 
         await this.connect;
 
@@ -40,21 +41,27 @@ module.exports = {
                 try {
                     let collection = client.db(dbName).collection(collectionName);
 
-                    collection.find(filter || {})
-                        .toArray((err, results) => {
-                            if (err) reject(err);
+                    let data = collection.find(filter || {});
 
-                            // console.log(`>> GET ${collectionName} results`, results);
+                    if (sort) data.sort(sort);
 
-                            if (results === null || !results.length) {
+                    data.toArray((err, results) => {
+                        if (err) reject(err);
 
-                                resolve(null);
+                        // console.log(`>> GET ${collectionName} results`, results);
 
-                            } else {
-                                resolve(results[0]);
-                            }
+                        if (results === null || !results.length) {
 
-                        });
+                            resolve(null);
+
+                        } else if (results.length === 1) {
+                            resolve(results[0]);
+
+                        } else {
+                            resolve(results);
+                        }
+
+                    });
 
                 } catch (err) {
                     reject(err);
@@ -122,7 +129,7 @@ module.exports = {
 
                         let status = err ? 'error' : 'success';
 
-                        resolve(JSON.stringify({ status }))
+                        resolve(status)
 
                     }
                 );

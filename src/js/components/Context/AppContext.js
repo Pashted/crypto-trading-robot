@@ -1,6 +1,6 @@
 import React, { createContext } from 'react'
 
-import params from '../../../../controllers/storage/appParams'
+import params from '../../../../components/storage/data/appParams'
 
 let Context = createContext(params);
 

@@ -39,6 +39,7 @@ module.exports = {
         alias: {
             'uikit-icons':          path.resolve('./node_modules/uikit/dist/js/uikit-icons'),
             'highcharts/highstock': path.resolve(`./node_modules/highcharts/highstock.src.js`),
+            'timeframesMultiplies': path.resolve(`./components/storage/data/timeframes`),
         }
     },
 

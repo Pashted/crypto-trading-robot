@@ -32,10 +32,12 @@ class AppProvider extends Component {
             try {
                 setTheme(defaultAppSettings.theme);
 
-                let res = await send({ method: 'resetSettings' });
+                let res = await send({
+                    action: 'storage.AppSettings.reset'
+                });
 
                 Notify.warning('Settings reset complete');
-                console.log('~~ resetSettings', res);
+                console.log('~~ AppSettings reset', res);
 
                 this.setState(this.defaultState);
 
@@ -53,10 +55,13 @@ class AppProvider extends Component {
      */
     async saveSettings() {
         try {
-            let res = await send({ method: 'setUserSettings', data: this.state });
+            let res = await send({
+                action: 'storage.AppSettings.set',
+                data:   this.state
+            });
 
             // Notify.message('Settings saved');
-            console.log('~~ saveSettings', res)
+            console.log('~~ AppSettings save', res)
 
         } catch (err) {
             Notify.error(err);
@@ -68,23 +73,21 @@ class AppProvider extends Component {
     /**
      * First getting of user and selected exchange settings
      */
-    componentDidMount() {
+    async componentDidMount() {
         console.log('## AppProvider componentDidMount');
 
         try {
-            Promise.all([
-                send({ method: 'getExchangesList' }),
-                send({ method: 'getUserSettings' })
-            ]).then(data => {
+            const settings = await send({ action: 'storage.AppSettings.get' });
 
-                this.defaultState._exchanges = data[0];
 
-                if (data[1])
-                    this.setState({ _exchanges: data[0], ...data[1], ...this.UIMethods }); // if there are saved settings, apply them
-                else
-                    this.setState(this.defaultState);
-            })
+            if (settings) {
+                this.defaultState._exchanges = settings._exchanges;
 
+                this.setState({ ...settings, ...this.UIMethods }); // if there are saved settings, apply them
+
+            } else {
+                this.setState(this.defaultState);
+            }
 
         } catch (err) {
             Notify.error(err);
@@ -98,7 +101,7 @@ class AppProvider extends Component {
     }
 
 
-    defaultState = {...defaultAppSettings, ...this.UIMethods};
+    defaultState = { ...defaultAppSettings, ...this.UIMethods };
 
     state = this.defaultState;
 

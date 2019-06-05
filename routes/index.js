@@ -10,8 +10,8 @@ const express = require('express'),
         '/settings/interface/',
         '/help/'
     ],
-    db = require('../models/database/mongodb'),
-    defaultTheme = require('../controllers/storage/appParams').theme;
+    db = require('../models/database'),
+    defaultTheme = require('../components/storage/data/appParams').theme;
 
 
 router.get(sections, async (req, res) => {

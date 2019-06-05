@@ -13,7 +13,7 @@ let connect = () => {
     return new Promise(resolve => ws.onopen = () => {
 
         /**
-         * Adding the server response handlers to the new connection
+         * Cancel old requests on new connection
          */
         for (let name in promiseQueue) {
             if (!promiseQueue.hasOwnProperty(name))
@@ -21,7 +21,7 @@ let connect = () => {
 
             console.log('~~ WS.CONNECT: reject old promise', name);
 
-            off(name);
+            off(name, name + ' operation has been rejected due to reconnection');
 
 
             // TODO: save data in the queue for recurring infinity events, to request the data again after the server restarts
@@ -29,28 +29,35 @@ let connect = () => {
 
         ws.onclose = reconnect;
 
-        ws.onmessage = event => {
-            if (!event.data)
+        ws.onmessage = e => {
+            if (!e.data)
                 return false;
 
-            let response = JSON.parse(event.data);
+            let response = JSON.parse(e.data);
 
             console.log('<< WS.MESSAGE:', response);
 
             if (response.event && promiseQueue.hasOwnProperty(response.event)) {
 
-                // Calling a previously saved event on the client transferring data from the server to it
-                promiseQueue[response.event].resolve(response.data);
+                // makes it possible for the client to repeatedly receive responses from the server for the same event
+                if (response.infinity && promiseQueue[response.event].progress)
+                    promiseQueue[response.event].progress(response.data);
 
-                if (!response.infinity)
+                else {
+                    // Calling a previously saved event on the client transferring data from the server to it
+                    promiseQueue[response.event].resolve(response.data);
+
+                    // ...finish him
                     off(response.event);
+
+                }
 
             }
 
         };
 
-
         console.log('<< WS.CONNECT - READY');
+        timer = 0;
 
         resolve();
     });
@@ -60,11 +67,12 @@ let connect = () => {
 /**
  * Reconnect when disconnected from server
  */
-let reconnect = () => {
-    console.log('~~ WS.RECONNECT: Connection lost. Reconnect in 1 sec...');
+let timer = 0,
+    reconnect = () => {
+        console.log(`~~ WS.RECONNECT: Connection lost. Reconnect in ${++timer} sec...`);
 
-    setTimeout(connect, 1000);
-};
+        setTimeout(connect, timer * 1000);
+    };
 
 
 /**
@@ -73,33 +81,36 @@ let reconnect = () => {
  * @param callbacks {Object}
  */
 let on = (name, callbacks) => {
-
-    // re-subscription
-    if (promiseQueue.hasOwnProperty(name))
-        off(name);
-
-
     /**
      * Callbacks are saved to the array in case of reconnection to the server.
      * On the new connection they need to hang up again - this is the "connect" function's area of responsibility.
      */
     // console.log('~~ WS.ON:', name);
 
-    promiseQueue[name] = callbacks;
+    if (promiseQueue.hasOwnProperty(name)) {
+        callbacks.reject("Server is busy. Please wait or check server's console.");
+
+        return false;
+
+    } else {
+        promiseQueue[name] = callbacks;
+
+        return true;
+    }
 };
 
 
 /**
  * Removing subscription to an event
  * @param name {String}
- * @param rejectReason
+ * @param reason
  */
-let off = (name, rejectReason) => {
+let off = (name, reason) => {
 
     if (promiseQueue.hasOwnProperty(name)) {
-        // console.log('~~ WS.OFF:', name, rejectReason ? 'REJECTED' : '');
+        // console.log('~~ WS.OFF:', name, reason || 'no reason');
 
-        promiseQueue[name].reject(rejectReason || false);
+        promiseQueue[name].reject(reason || `${name} operation has been rejected without reason`);
 
 
         delete promiseQueue[name];
@@ -113,15 +124,20 @@ let off = (name, rejectReason) => {
 /**
  * Sending a message to the server with a response event subscription
  * @param data {Object}
+ * @param onProgress {Function} Optional callback for loop response
  */
-let send = data => new Promise((resolve, reject) => {
+let send = (data, onProgress) => new Promise((resolve, reject) => {
 
-    on(data.method, { resolve, reject });
+    const progress = typeof onProgress === 'function' ? onProgress : null;
 
-    console.log('>> WS.SEND:', data);
+    if (on(data.action, { resolve, reject, progress })) {
 
-    // forming a string from an object before sending
-    ws.send(JSON.stringify(data));
+        console.log('>> WS.SEND:', data);
+
+        // forming a string from an object before sending
+        ws.send(JSON.stringify(data));
+    }
+
 });
 
 
