@@ -80,7 +80,11 @@ module.exports = {
         tick(100);
 
 
-        if (candles) {
+        if (candles.length) {
+
+            const [ ts1 ] = candles[0][0],
+                [ ts2 ] = candles.slice(-1)[0].slice(-1)[0];
+
             // combine arrays to object for making empty candles
             candles = candles.reduce((res, data) => {
                 data.forEach(candle => res[candle[0]] = candle);
@@ -88,11 +92,11 @@ module.exports = {
             }, {});
 
 
-            if (timeframe !== '1M')
-                return Exchange.formatCandles(candles, shift);
+            if (timeframe === '1M')
+                return Exchange.formatMonthCandles(candles);
 
             else
-                return Exchange.formatMonthCandles(candles, shift);
+                return Exchange.formatCandles({ candles, shift, ts: ts1, stop: ts2 });
 
         } else {
             throw new Error("Can't get candles from anywhere");

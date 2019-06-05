@@ -95,19 +95,15 @@ module.exports = {
      * LOW      float   Lowest execution during the timeframe
      * VOLUME   float   Quantity of symbol traded within the timeframe
      */
-    formatCandles(candles, shift) {
+    formatCandles({ candles, shift, ts, stop }) {
 
-        let ohlc = [], volume = [],
-
-            keys = Object.keys(candles),
-            [ ts ] = keys,
-            [ stop ] = keys.slice(-1);
+        let ohlc = [], volume = [];
 
         while (ts <= stop) {
 
-            const [ date, open, close, high, low, vol ] = candles[ts];
-
             if (candles.hasOwnProperty(ts)) {
+                const [ date, open, close, high, low, vol ] = candles[ts];
+
                 ohlc.push([ date, open, high, low, close ]);
                 volume.push([ date, vol ]);
 
@@ -115,8 +111,8 @@ module.exports = {
                 // if no data performed for this period, get the previous value
                 const [ prev ] = ohlc.slice(-1)[0].slice(-1);
 
-                ohlc.push([ date, prev, prev, prev, prev ]);
-                volume.push([ date, 0 ]);
+                ohlc.push([ ts, prev, prev, prev, prev ]);
+                volume.push([ ts, 0 ]);
             }
 
             ts += shift;
