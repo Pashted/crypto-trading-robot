@@ -1,6 +1,6 @@
 import timeframes from './timeframes'
 
-const yesterday = (d => new Date(d.setDate(d.getDate() - 1)))(new Date);
+const past = (d => new Date(d.setFullYear(d.getFullYear() - 3)))(new Date);
 
 export default {
     _context:   "exchange",
@@ -12,7 +12,7 @@ export default {
     symbol:     "BTC",
     pair:       "USD",
     deposit:    [0, 100],
-    start:      yesterday.toISOString(),
+    start:      past.toISOString(),
     end:        false,
     timeframe:  "1D",
     timeframes: Object.keys(timeframes)
