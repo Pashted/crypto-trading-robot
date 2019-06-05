@@ -2,7 +2,7 @@ const path = require('path'),
     db = require('../../models/database'),
     multiplies = require('../../components/storage/data/timeframes'),
 
-    bufferLimit = 3;  // batch size for queries
+    bufferLimit = 1;  // batch size for queries
 
 module.exports = {
 
@@ -52,11 +52,8 @@ module.exports = {
                       ? candles.reduce((res, { data }) => [ ...res, data ], [])
                       : [ candles.data ];
 
-
-            const [ group1 ] = candles, [ groupN ] = candles.slice(-1),
-                [ candle1 ] = group1, [ candleN ] = groupN.slice(-1);
-
-            let [ savedStart ] = candle1, [ savedEnd ] = candleN;
+            let [ savedStart ] = candles[0][0],
+                [ savedEnd ] = candles.slice(-1)[0].slice(-1)[0];
 
             savedStart -= shift; // shift to the older group
             savedEnd += shift; // shift to the younger group
@@ -99,7 +96,7 @@ module.exports = {
         let data = [],
             buffer = [],
             finish = false,
-            expected = Math.ceil((end - start) / shift),
+            expected = end - start,
             progress = 0;
 
         while (!finish) {
@@ -118,17 +115,23 @@ module.exports = {
 
                 console.log('...wait data from exchange');
                 const candles = (await Promise.all(buffer))
-                    .filter(arr => {
-                        progress += arr.length;
-                        return arr.length;
-                    });
+                    .filter(arr => arr.length);
+
+
+                if (candles.length) {
+                    start = candles.slice(-1)[0].slice(-1)[0][0] + shift;
+                    finish = start >= end;
+
+                    progress = expected - (end - start);
+
+                    // tell client current progress
+                    tick(Math.round(progress / expected * 100));
+                }
+
 
                 this.save({ filter, candles });
 
                 data = [ ...data, ...candles ];
-
-                // tell client current progress
-                tick(Math.round(progress / expected * 100));
 
                 buffer = [];
             }
