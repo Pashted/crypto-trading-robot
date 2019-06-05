@@ -174,7 +174,7 @@ class Chart extends PureComponent {
                 title:     {
                     text: "OHLC"
                 },
-                height:    "60%",
+                height:    "80%",
                 lineWidth: 2,
                 resize:    {
                     enabled: true
@@ -188,8 +188,8 @@ class Chart extends PureComponent {
                 title:     {
                     text: "Volume"
                 },
-                top:       "65%",
-                height:    "35%",
+                top:       "82%",
+                height:    "18%",
                 offset:    0,
                 lineWidth: 2
             }
