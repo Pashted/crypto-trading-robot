@@ -4,26 +4,15 @@ import HighchartsReact from 'highcharts-react-official'
 
 import AppContext from '../Context/AppContext';
 
-import { mergeDeep } from '../../helpers'
+const defaultOptions = { ...Highcharts.getOptions() },
 
-// groupingUnits
-const units = [
-        [
-            'minute',
-            [ 1, 5, 15, 30 ]
-        ], [
-            'hour',
-            [ 1, 3, 6, 12 ]
-        ], [
-            'day',
-            [ 1 ]
-        ], [
-            'week',
-            [ 1, 2 ]
-        ], [
-            'month',
-            [ 1 ]
-        ]
+    // groupingUnits
+    units = [
+        [ 'minute', [ 1, 5, 15, 30 ] ],
+        [ 'hour', [ 1, 3, 6, 12 ] ],
+        [ 'day', [ 1 ] ],
+        [ 'week', [ 1, 2 ] ],
+        [ 'month', [ 1 ] ]
     ],
 
     // preselect zoom values for each timeframe
@@ -34,7 +23,7 @@ const units = [
         "30m": 6,
         "1h":  5,
         "3h":  4,
-        "6h":  4,
+        "6h":  3,
         "12h": 3,
         "1D":  2,
         "7D":  1,
@@ -50,12 +39,9 @@ class Chart extends PureComponent {
     componentWillMount() {
         console.log('## Chart componentWillMount', this.context);
 
-        this.setState(
-            mergeDeep(
-                require(`./${this.context.theme}-theme.js`).default,
-                this.state
-            )
-        );
+        this.ResetOptions();
+
+        Highcharts.setOptions(require(`./${this.context.theme}-theme.js`).default);
     }
 
     componentDidMount() {
@@ -71,21 +57,23 @@ class Chart extends PureComponent {
             '\n _nextProps', nextProps
         );
 
-        let state = {};
+        let options = {};
 
         if (this.props.timeframe !== nextProps.timeframe) {
+
             this.defaultState.rangeSelector.selected = cases[nextProps.timeframe];
-            state.rangeSelector = {
+
+            options.rangeSelector = {
                 ...this.state.rangeSelector,
                 selected: cases[nextProps.timeframe]
             };
         }
 
         if (this.props.title !== nextProps.title)
-            state.title = { text: nextProps.title };
+            options.title = { text: nextProps.title };
 
         if (this.props.ohlc !== nextProps.ohlc)
-            state.series = [
+            options.series = [
                 {
                     ...this.state.series[0],
                     data: nextProps.ohlc
@@ -96,8 +84,8 @@ class Chart extends PureComponent {
                 }
             ];
 
-        if (state)
-            this.setState(state);
+        if (options)
+            this.setState(options);
     }
 
     componentDidUpdate() {
@@ -105,89 +93,58 @@ class Chart extends PureComponent {
     }
 
 
+    /**
+     * Reset charts options for switching themes
+     * @constructor
+     */
+    ResetOptions = () => {
+        let options = Highcharts.getOptions();
+
+        for (let prop in options)
+            if (options.hasOwnProperty(prop) && typeof options[prop] !== 'function')
+                delete options[prop];
+
+
+        Highcharts.setOptions(defaultOptions);
+    };
+
+
     defaultState = {
-        chart:         {
-            height: 800
-        },
+        chart: { height: 800 },
+
         rangeSelector: {
             allButtonsEnabled: true,
+            buttonTheme:       { width: 40 },
+            selected:          cases[this.props.timeframe],
             buttons:           [
-                {
-                    type: 'all',
-                    text: 'All'
-                }, {
-                    type:  'year',
-                    count: 3,
-                    text:  '3Y'
-                }, {
-                    type:  'year',
-                    count: 1,
-                    text:  '1Y'
-                }, {
-                    type:  'month',
-                    count: 3,
-                    text:  '3M'
-                }, {
-                    type:  'month',
-                    count: 1,
-                    text:  '1M'
-                }, {
-                    type:  'day',
-                    count: 7,
-                    text:  '7D'
-                }, {
-                    type:  'day',
-                    count: 3,
-                    text:  '3D'
-                }, {
-                    type:  'day',
-                    count: 1,
-                    text:  '1D'
-                }, {
-                    type:  'hour',
-                    count: 6,
-                    text:  '6h'
-                }, {
-                    type:  'hour',
-                    count: 1,
-                    text:  '1h'
-                },
-            ],
-
-            buttonTheme: {
-                width: 40
-            },
-
-            selected: cases[this.props.timeframe]
+                { type: 'all', text: 'All' },
+                { type: 'year', count: 3, text: '3Y' },
+                { type: 'year', count: 1, text: '1Y' },
+                { type: 'month', count: 3, text: '3M' },
+                { type: 'month', count: 1, text: '1M' },
+                { type: 'day', count: 14, text: '14D' },
+                { type: 'day', count: 7, text: '7D' },
+                { type: 'day', count: 3, text: '3D' },
+                { type: 'day', count: 1, text: '1D' },
+                { type: 'hour', count: 6, text: '6h' },
+                { type: 'hour', count: 3, text: '3h' },
+                { type: 'hour', count: 1, text: '1h' }
+            ]
         },
 
-        title: {
-            text: this.props.title
-        },
+        title: { text: this.props.title },
 
         yAxis: [
             {
-                labels:    {
-                    align: "right",
-                    x:     -3
-                },
-                title:     {
-                    text: "OHLC"
-                },
+                labels:    { align: "right", x: -3 },
+                title:     { text: "Price" },
                 height:    "80%",
                 lineWidth: 2,
-                resize:    {
-                    enabled: true
-                }
+                resize:    { enabled: true }
             },
             {
-                labels:    {
-                    align: "right",
-                    x:     -3
-                },
-                title:     {
-                    text: "Volume"
-                },
+                labels:    { align: "right", x: -3 },
+                title:     { text: "Volume" },
                 top:       "82%",
                 height:    "18%",
                 offset:    0,
@@ -195,26 +152,25 @@ class Chart extends PureComponent {
             }
         ],
 
-        tooltip: {
-            split: true
-        },
+        tooltip: { split: true },
 
         series: [
             {
                 type:         "candlestick",
                 name:         "Price",
                 data:         this.props.ohlc,
-                dataGrouping: { units }
+                dataGrouping: { groupPixelWidth: 12, units }
             },
             {
                 type:         "column",
                 name:         "Volume",
                 data:         this.props.volume,
                 yAxis:        1,
-                dataGrouping: { units }
+                dataGrouping: { groupPixelWidth: 12, units }
             }
         ]
     };
+
 
     state = this.defaultState;
 

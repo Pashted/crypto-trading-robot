@@ -1,18 +1,13 @@
 let axis = {
         gridLineColor:      'rgba(255,255,225, 0.08)',
         labels:             {
-            style: {
-                color: '#E0E0E3'
-            }
+            style: { color: '#E0E0E3' }
         },
         lineColor:          '#707073',
         minorGridLineColor: 'rgba(255,255,225, 0.05)',
         tickColor:          '#707073',
         title:              {
-            style: {
-                color: '#A0A0A3'
-
-            }
+            style: { color: '#A0A0A3' }
         }
     },
 
@@ -25,8 +20,8 @@ let axis = {
             backgroundColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
                 stops:          [
-                    [0, '#2a2a2b'],
-                    [1, '#3e3e40']
+                    [ 0, '#2a2a2b' ],
+                    [ 1, '#3e3e40' ]
                 ]
             },
             plotBorderColor: '#606063'
@@ -56,9 +51,7 @@ let axis = {
 
         tooltip:     {
             backgroundColor: 'rgba(0, 0, 0, 0.85)',
-            style:           {
-                color: '#F0F0F0'
-            }
+            style:           { color: '#F0F0F0' }
         },
         plotOptions: {
             series:      {
@@ -89,9 +82,7 @@ let axis = {
         navigation: {
             buttonOptions: {
                 symbolStroke: '#DDDDDD',
-                theme:        {
-                    fill: '#505053'
-                }
+                theme:        { fill: '#505053' }
             }
         },
 
@@ -100,9 +91,7 @@ let axis = {
             buttonTheme:         {
                 fill:   '#505053',
                 stroke: '#000000',
-                style:  {
-                    color: '#CCC'
-                },
+                style:  { color: '#CCC' },
                 states: {
                     hover:  {
                         fill:   '#707073',
@@ -159,9 +148,7 @@ let axis = {
         contrastTextColor:     '#F0F0F3',
         maskColor:             'rgba(255,255,255,0.3)',
 
-        pointDown: {
-            color: '#f00'
-        }
+        pointDown: { color: '#f00' }
     };
 
 export default theme;
