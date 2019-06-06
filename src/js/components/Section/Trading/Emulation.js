@@ -54,7 +54,7 @@ class Emulation extends Component {
                             <ProgressButton name='Get candles' style='secondary' onClick={getCandles}/>
 
                             {candles.ohlc && candles.ohlc.length &&
-                            <Chart ohlc={candles.ohlc || []} volume={candles.volume || []} title={symbol + pair + ', ' + exchange} timeframe={timeframe}/>}
+                            <Chart data={candles || []} title={symbol + pair + ', ' + exchange} timeframe={timeframe}/>}
 
                             <Footer>
                                 <Button name='Start' onClick={() => false}/>

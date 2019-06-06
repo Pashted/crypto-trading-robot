@@ -1,6 +1,9 @@
 import React, { PureComponent } from 'react'
 import Highcharts from 'highcharts/highstock'
 import HighchartsReact from 'highcharts-react-official'
+import * as HighchartsMore from 'highcharts/highcharts-more'
+
+HighchartsMore(Highcharts);
 
 import AppContext from '../Context/AppContext';
 
@@ -72,16 +75,20 @@ class Chart extends PureComponent {
         if (this.props.title !== nextProps.title)
             options.title = { text: nextProps.title };
 
-        if (this.props.ohlc !== nextProps.ohlc)
+        if (this.props.data !== nextProps.data)
             options.series = [
                 {
                     ...this.state.series[0],
-                    data: nextProps.ohlc
+                    data: nextProps.data.ohlc || []
                 },
                 {
                     ...this.state.series[1],
-                    data: nextProps.volume
-                }
+                    data: nextProps.data.dc || []
+                },
+                {
+                    ...this.state.series[2],
+                    data: nextProps.data.volume || []
+                },
             ];
 
         if (options)
@@ -158,16 +165,25 @@ class Chart extends PureComponent {
             {
                 type:         "candlestick",
                 name:         "Price",
-                data:         this.props.ohlc,
-                dataGrouping: { groupPixelWidth: 12, units }
+                data:         this.props.data.ohlc,
+                dataGrouping: { units },
+                zIndex:       10
+            },
+            {
+                type:      "arearange",
+                name:      "Donchian Channels",
+                fillColor: 'rgba(0,100,255,0.25)',
+                lineColor: 'rgba(0,100,255,0.5)',
+                data:      this.props.data.dc,
+                dataGrouping: { units },
             },
             {
                 type:         "column",
                 name:         "Volume",
-                data:         this.props.volume,
+                data:         this.props.data.volume,
                 yAxis:        1,
-                dataGrouping: { groupPixelWidth: 12, units }
-            }
+                dataGrouping: { units }
+            },
         ]
     };
 

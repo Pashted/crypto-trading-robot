@@ -1,5 +1,6 @@
 const path = require('path'),
     db = require('../../models/database'),
+    { DC } = require('../trader/Indicators'),
     multiplies = require('../../components/storage/data/timeframes'),
 
     bufferLimit = 1;  // batch size for queries
@@ -96,11 +97,16 @@ module.exports = {
             }, {});
 
 
-            if (timeframe === '1M')
-                return Exchange.formatMonthCandles(candles);
+            candles = timeframe === '1M'
+                      ? Exchange.formatMonthCandles(candles)
+                      : Exchange.formatCandles({ candles, shift, ts: ts1, stop: ts2 });
 
-            else
-                return Exchange.formatCandles({ candles, shift, ts: ts1, stop: ts2 });
+
+            // Calculate indicators
+            const dc = DC.process(candles.ohlc);
+
+            return { ...candles, dc };
+
 
         } else {
             throw new Error("Can't get candles from anywhere");
