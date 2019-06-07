@@ -1,5 +1,4 @@
-const { DC } = require('bfx-hf-indicators'),
-    db = require('../../models/database');
+const { DC } = require('bfx-hf-indicators');
 
 
 module.exports = {
@@ -7,10 +6,11 @@ module.exports = {
         /**
          *
          * @param ohlc {Array} [ Timestamp, Open, High, Low, Close ]
-         * @returns {*|Array}
+         * @param period {Number}
+         * @returns {Array}
          */
-        process(ohlc) {
-            let _dc = new DC([ 20 ]), dc = [];
+        process({ ohlc, period }) {
+            let _dc = new DC([ period ]), dc = [];
 
             ohlc.forEach(candle => {
                 const value = _dc.add({

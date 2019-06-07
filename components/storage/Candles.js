@@ -103,7 +103,7 @@ module.exports = {
 
 
             // Calculate indicators
-            const dc = DC.process(candles.ohlc);
+            const dc = DC.process({ ohlc: candles.ohlc, period: 30 });
 
             return { ...candles, dc };
 
