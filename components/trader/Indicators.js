@@ -27,5 +27,27 @@ module.exports = {
 
             return dc;
         }
+    },
+
+
+    Fib: {
+        calc({ B, diff, level }) {
+
+            const dist = Math.round(diff * Math.pow(10, 4)) / 10000;
+            return Math.round((B + level * dist) * Math.pow(10, 4)) / 10000;
+        },
+
+        process(dc) {
+
+            return dc.map(([ ts, high, low ]) => [
+                ts,
+                this.calc({ B: low, diff: high - low, level: 3.618 }),
+                this.calc({ B: low, diff: high - low, level: 2.618 }),
+                this.calc({ B: low, diff: high - low, level: 1.618 }),
+                this.calc({ B: high, diff: high - low, level: -1.618 }),
+                this.calc({ B: high, diff: high - low, level: -2.618 }),
+                this.calc({ B: high, diff: high - low, level: -3.618 }),
+            ]);
+        }
     }
 };

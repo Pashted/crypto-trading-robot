@@ -1,6 +1,6 @@
 const path = require('path'),
     db = require('../../models/database'),
-    { DC } = require('../trader/Indicators'),
+    { DC, Fib } = require('../trader/Indicators'),
     multiplies = require('../../components/storage/data/timeframes'),
 
     bufferLimit = 1;  // batch size for queries
@@ -103,9 +103,10 @@ module.exports = {
 
 
             // Calculate indicators
-            const dc = DC.process({ ohlc: candles.ohlc, period: 30 });
+            const dc = DC.process({ ohlc: candles.ohlc, period: 30 }),
+                fib = Fib.process(dc);
 
-            return { ...candles, dc };
+            return { ...candles, dc, fib };
 
 
         } else {

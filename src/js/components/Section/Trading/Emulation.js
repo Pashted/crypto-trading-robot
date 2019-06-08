@@ -26,7 +26,10 @@ class Emulation extends Component {
 
 
                 <ExchangeContext.Consumer>
-                    {({ setParam, getCandles, exchange, candles, symbol, pair, deposit, start, end, timeframes, timeframe }) => {
+                    {({
+                          setParam, getCandles, startEmulation, stopEmulation,
+                          exchange, candles, symbol, pair, deposit, start, end, timeframes, timeframe
+                      }) => {
 
                         let dateEnd = end ? new Date(end) : new Date(),
                             endTs = dateEnd.getTime(),
@@ -57,8 +60,8 @@ class Emulation extends Component {
                             <Chart data={candles || []} title={symbol + pair + ', ' + exchange} timeframe={timeframe}/>}
 
                             <Footer>
-                                <Button name='Start' onClick={() => false}/>
-                                <Button name='Stop'/>
+                                <ProgressButton name='Start' onClick={startEmulation}/>
+                                <Button name='Stop' onClick={stopEmulation}/>
                             </Footer>
                         </>
 

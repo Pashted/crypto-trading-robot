@@ -35,7 +35,8 @@ let connect = () => {
 
             let response = JSON.parse(e.data);
 
-            console.log('<< WS.MESSAGE:', response);
+            if (response.data && !response.data.progress)
+                console.log('<< WS.MESSAGE:', response);
 
             if (response.event && promiseQueue.hasOwnProperty(response.event)) {
 

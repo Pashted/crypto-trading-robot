@@ -47,6 +47,9 @@ let start = server => {
             } catch (err) {
                 response.data = err.message;
                 response.status = 'error';
+                response.stack = err.stack;
+
+                console.error(err.stack);
 
             }
 

@@ -42,7 +42,7 @@ export let Grid = props => (
  * @param time
  * @param place
  */
-let show = (text, style, icon, time, place) => {
+let show = ({ text, style, icon, time, place }) => {
     UIkit.notification({
         message: `<span uk-icon='${icon || 'nut'}'> </span> ${text}`,
         status:  style || 'primary',
@@ -52,9 +52,23 @@ let show = (text, style, icon, time, place) => {
 };
 
 export let Notify = {
-    message: text => show(text, 'success'),
-    warning: text => show(text, 'warning', 'info', 9000),
-    error:   text => show(text, 'danger', 'warning', 15000),
-    buy:     order => show(`Buy ${order.pair}<br>P: ${order.price}, V: ${order.volume}`, 'success', 'bolt', null, 'bottom-left'),
-    sell:    order => show(`Sell ${order.pair}<br>P: ${order.price}, V: ${order.volume}`, 'danger', 'bolt', null, 'bottom-left')
+    message: text => show({ text, style: 'success' }),
+
+    warning: text => show({ text, style: 'warning', icon: 'info', time: 9000 }),
+
+    error: text => show({ text, style: 'danger', icon: 'warning', time: 15000 }),
+
+    buy: ({ pair, price, volume }) => show({
+        text:  `Buy ${pair}<br>P: ${price}, V: ${volume}`,
+        style: 'success',
+        icon:  'bolt',
+        place: 'bottom-left'
+    }),
+
+    sell: ({ pair, price, volume }) => show({
+        text:  `Sell ${pair}<br>P: ${price}, V: ${volume}`,
+        style: 'danger',
+        icon:  'bolt',
+        place: 'bottom-left'
+    })
 };
