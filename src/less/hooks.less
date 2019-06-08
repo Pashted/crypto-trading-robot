@@ -120,6 +120,9 @@ aside {
             &::-ms-fill {transition: none}
         }
     }
+    &:not([disabled]) progress[value="100"] {
+        display: none;
+    }
 }
 
 .highcharts-point-up {

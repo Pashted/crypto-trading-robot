@@ -73,14 +73,14 @@ class ProgressButton extends Component {
 
         await this.props.onClick(this.tick);
 
-        await new Promise(res => setTimeout(res, 500));
+        await new Promise(res => setTimeout(res, 600));
 
         this.setState({ progress: 100, disabled: this.props.disabled });
 
     };
 
     tick = ({ progress }) => {
-        if (progress)
+        if (progress >= 0)
             this.setState({ progress });
     };
 

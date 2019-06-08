@@ -13,7 +13,7 @@ let start = server => {
 
         // creating a string from an object before sending
         let _send = data => {
-            console.log('>> RESPONSE\n', data);
+            // console.log('>> RESPONSE\n', data);
             ws.send(JSON.stringify(data));
         };
 
