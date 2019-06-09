@@ -1,34 +1,34 @@
 import React from 'react'
 
-export let Grid = props => (
+export let Grid = ({ children }) => (
         <div className="uk-grid">
-            {props.children}
+            {children}
         </div>
     ),
 
 
-    Container = props => (
+    Container = ({ children }) => (
         <div className="uk-container uk-container-expand">
             <Grid>
-                {props.children}
+                {children}
             </Grid>
         </div>
     ),
 
 
-    Header = props => (
+    Header = ({ title, desc }) => (
         <>
-            <h1>{props.title}</h1>
-            {props.desc && (<p className="uk-text-lead uk-margin-medium-top">{props.desc}</p>)}
+            <h1>{title}</h1>
+            {desc && (<p className="uk-text-lead uk-margin-medium-top">{desc}</p>)}
             <hr/>
         </>
     ),
 
 
-    Main = props => (
+    Main = ({ children }) => (
         <div className="uk-width-expand">
             <section className="uk-section">
-                {props.children}
+                {children}
             </section>
         </div>
     );
