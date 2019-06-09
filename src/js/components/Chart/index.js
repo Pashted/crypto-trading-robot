@@ -3,36 +3,19 @@ import Highcharts from 'highcharts/highstock'
 import HighchartsReact from 'highcharts-react-official'
 import * as HighchartsMore from 'highcharts/highcharts-more'
 
+import { units, cases, buttons } from './_params'
+import {
+    chartOptions as ordersOptions,
+    chartSeries as ordersSeries
+} from './Order'
+
+import processFibLevels from './Fibonacci'
+
 HighchartsMore(Highcharts);
 
 import AppContext from '../Context/AppContext';
 
-const defaultOptions = { ...Highcharts.getOptions() },
-
-    // groupingUnits
-    units = [
-        [ 'minute', [ 1, 5, 15, 30 ] ],
-        [ 'hour', [ 1, 3, 6, 12 ] ],
-        [ 'day', [ 1 ] ],
-        [ 'week', [ 1, 2 ] ],
-        [ 'month', [ 1 ] ]
-    ],
-
-    // preselect zoom values for each timeframe
-    cases = {
-        "1m":  9,
-        "5m":  8,
-        "15m": 7,
-        "30m": 6,
-        "1h":  5,
-        "3h":  4,
-        "6h":  3,
-        "12h": 3,
-        "1D":  2,
-        "7D":  1,
-        "14D": 0,
-        "1M":  0,
-    };
+const defaultOptions = { ...Highcharts.getOptions() };
 
 
 class Chart extends PureComponent {
@@ -89,6 +72,10 @@ class Chart extends PureComponent {
                     ...this.state.series[2],
                     data: nextProps.data.volume || []
                 },
+
+                ...ordersSeries,
+
+                ...processFibLevels(nextProps.data.fib),
             ];
 
         if (options)
@@ -120,24 +107,13 @@ class Chart extends PureComponent {
         chart: { height: 800 },
 
         rangeSelector: {
+            buttons,
             allButtonsEnabled: true,
             buttonTheme:       { width: 40 },
-            selected:          cases[this.props.timeframe],
-            buttons:           [
-                { type: 'all', text: 'All' },
-                { type: 'year', count: 3, text: '3Y' },
-                { type: 'year', count: 1, text: '1Y' },
-                { type: 'month', count: 3, text: '3M' },
-                { type: 'month', count: 1, text: '1M' },
-                { type: 'day', count: 14, text: '14D' },
-                { type: 'day', count: 7, text: '7D' },
-                { type: 'day', count: 3, text: '3D' },
-                { type: 'day', count: 1, text: '1D' },
-                { type: 'hour', count: 6, text: '6h' },
-                { type: 'hour', count: 3, text: '3h' },
-                { type: 'hour', count: 1, text: '1h' }
-            ]
+            selected:          cases[this.props.timeframe]
         },
+
+        plotOptions: ordersOptions,
 
         title: { text: this.props.title },
 
@@ -170,11 +146,11 @@ class Chart extends PureComponent {
                 zIndex:       10
             },
             {
-                type:      "arearange",
-                name:      "Donchian Channels",
-                fillColor: 'rgba(0,100,255,0.25)',
-                lineColor: 'rgba(0,100,255,0.5)',
-                data:      this.props.data.dc,
+                type:         "arearange",
+                name:         "DC",
+                fillColor:    'rgba(0,157,255,0.05)',
+                lineColor:    'rgba(0,157,255,0.65)',
+                data:         this.props.data.dc,
                 dataGrouping: { units },
             },
             {
@@ -184,6 +160,11 @@ class Chart extends PureComponent {
                 yAxis:        1,
                 dataGrouping: { units }
             },
+
+            ...ordersSeries,
+
+            ...processFibLevels(this.props.data.fib)
+
         ]
     };
 

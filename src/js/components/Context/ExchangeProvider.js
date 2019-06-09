@@ -3,15 +3,16 @@ import React, { Component } from 'react';
 import ExchangeContext, { defaultExSettings } from "./ExchangeContext";
 
 import { getParam, filterObject } from '../../helpers'
-import { Notify } from '../../components/uikit'
+import { Notify } from '../uikit'
 import { send } from "../../ws";
+import * as Order from "../Chart/Order";
 
 
 class ExchangeProvider extends Component {
 
     /**
      * Methods used by children components for changing states
-     * @type {{getManyCandles: ExchangeProvider.UIMethods.getManyCandles, getSymbols: ExchangeProvider.UIMethods.getSymbols, setParam: ExchangeProvider.UIMethods.setParam, resetExchange: ExchangeProvider.UIMethods.resetExchange, getCandles: ExchangeProvider.UIMethods.getCandles}}
+     * @type {{getManyCandles: ExchangeProvider.UIMethods.getManyCandles, startEmulation: ExchangeProvider.UIMethods.startEmulation, getSymbols: ExchangeProvider.UIMethods.getSymbols, setParam: ExchangeProvider.UIMethods.setParam, resetExchange: ExchangeProvider.UIMethods.resetExchange, getCandles: ExchangeProvider.UIMethods.getCandles, stopEmulation: ExchangeProvider.UIMethods.stopEmulation}}
      */
     UIMethods = {
         /**
@@ -129,7 +130,62 @@ class ExchangeProvider extends Component {
                 Notify.error(err);
                 console.log(err);
             }
-        }
+        },
+
+        startEmulation: async onProgress => {
+            try {
+                Order.clear();
+
+                const emulationResult = await send(
+                    {
+                        action: 'trader.Emulation.start',
+                        ...filterObject(this.state, [ 'exchange', 'pair', 'symbol', 'timeframe', 'start', 'end' ])
+                    },
+                    ({ progress, type = 0, action, order, amount, pair, ts = 0 }) => {
+
+                        if (ts)
+                            Order.showNext(ts);
+
+                        if (type)
+                            Order[type][action]({
+                                order,
+                                data: { pair, price: order[1], volume: amount }
+                            });
+
+                        if (progress >= 0)
+                            onProgress({ progress });
+                    }
+                );
+
+                console.log('~~ Emulation result', emulationResult);
+
+                if (typeof emulationResult === 'string')
+                    Notify.error(emulationResult);
+
+                else
+                    Notify.message('Emulation complete');
+
+
+            } catch (err) {
+                Notify.error(err);
+                console.log(err);
+            }
+        },
+
+        stopEmulation: async () => {
+
+            try {
+                await send({
+                    action: 'trader.Emulation.stop',
+                    // ...filterObject(this.state, [ 'exchange', 'pair', 'symbol', 'timeframe', 'start', 'end' ])
+                });
+
+            } catch (err) {
+                Notify.error(err);
+                console.log(err);
+            }
+        },
+
 
     };
 
