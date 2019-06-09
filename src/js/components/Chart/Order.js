@@ -65,7 +65,7 @@ export const
 
 
     sell = {
-        add:  ({ order }) => Highcharts.charts.slice(-1)[0].series[3].addPoint(order),
+        add: ({ order }) => Highcharts.charts.slice(-1)[0].series[3].addPoint(order),
 
         exec: ({ order, data }) => {
             Notify.sell(data);
@@ -82,7 +82,7 @@ export const
     },
 
     buy = {
-        add:  ({ order }) => Highcharts.charts.slice(-1)[0].series[5].addPoint(order),
+        add: ({ order }) => Highcharts.charts.slice(-1)[0].series[5].addPoint(order),
 
         exec: ({ order, data }) => {
             Notify.buy(data);
@@ -100,18 +100,23 @@ export const
 
     goToStart = () => {
         const [ xAxis ] = Highcharts.charts.slice(-1)[0].xAxis,
-            { dataMin, min, max } = xAxis.getExtremes();
+            { dataMin, min, max } = xAxis.getExtremes(),
+            diff = max - min;
 
 
-        xAxis.setExtremes(dataMin, dataMin + (max - min));
+        xAxis.setExtremes(dataMin, dataMin + diff, true, false);
     },
 
     showNext = ts => {
         const [ xAxis ] = Highcharts.charts.slice(-1)[0].xAxis,
-            { min, max } = xAxis.getExtremes();
+            { dataMax, min, max } = xAxis.getExtremes(),
+            diff = max - min;
 
-        if (ts > max)
-            xAxis.setExtremes(max, max + (max - min));
+        if (ts + diff > dataMax)
+            xAxis.setExtremes(dataMax - diff, dataMax, true, false);
+
+        else if (ts > max)
+            xAxis.setExtremes(max, max + diff, true, false);
 
     },
 
