@@ -42,13 +42,12 @@ module.exports = {
 
         await new Promise(res => setTimeout(res, 500));
 
-        this.cancelOrders();
-
         return await this.process(dc, fib);
     },
 
     stop() {
         this.break = true;
+        this.cancelOrders();
     },
 
     async process(dc, levels) {
@@ -142,6 +141,8 @@ module.exports = {
 
         }
 
+        this.cancelOrders();
+
         return true;
 
     },
@@ -156,7 +157,7 @@ module.exports = {
 
         this.orders[type].push(order);
 
-        console.log(`++ New ${type} order BLOCKED ${order.amount} ${this.depSymbols[type]}, deposit:`, this.deposit);
+        console.log(`~~ New ${type} order BLOCKED ${order.amount} ${this.depSymbols[type]}, deposit:`, this.deposit);
 
         return order;
     },
@@ -168,7 +169,7 @@ module.exports = {
      * 2. open a new sell order relative to the executed order
      */
     openDeal(ts, order, { h1, l1 }) {
-        console.log('OPEN DEAL');
+        console.log('OPEN DEAL', order.type === 'buy' ? 'LONG' : 'SHORT');
 
         this.execOrder(ts, order);
 
@@ -182,6 +183,7 @@ module.exports = {
             this.addOrder([ newType, ts, price, order.result, 'closing' ])
         ));
 
+        console.log(this.deals)
 
     },
 
@@ -195,7 +197,7 @@ module.exports = {
         this.deposit[newType] += order.result;
 
 
-        console.log(`-- EXECUTED ${order.type} order, Result: ${order.result} ${this.depSymbols[newType]}, deposit:`, this.deposit);
+        console.log(`++ EXECUTED ${order.type} order, Result: ${order.result} ${this.depSymbols[newType]}, deposit:`, this.deposit);
 
     },
 
@@ -221,21 +223,27 @@ module.exports = {
 
         order.exec(ts);
 
+        console.log(`++ EXECUTED ${order.type} order, Result: ${order.result} ${this.depSymbols[order.type]}, deposit:`, this.deposit);
+
         this.orders[order.type].splice(order.index, 1);
 
     },
 
     cancelOrders() {
+        console.log('CANCEL ORDERS:');
 
         [ ...this.orders.sell, ...this.orders.buy ]
             .forEach(order => {
 
                 if (order.active) {
+
+                    console.log(order);
+
                     this.deposit[order.type] += order.amount;
 
                     console.log(`## CANCELED ${order.type} order, deposit:`, this.deposit);
 
-                    this.orders[order.type][order.index].splice(order.index, 1);
+                    this.orders[order.type].splice(order.index, 1);
 
                 }
             })
