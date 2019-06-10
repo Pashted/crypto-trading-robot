@@ -1,20 +1,21 @@
 class Deal {
     constructor(order) {
 
-        this.type = order.type;
-
-        this.orders = [ order.index ];
+        this.openingOrder = order;
 
         this.active = true;
 
     }
 
-    check(index) {
-        return this.orders.includes(index);
+    includes(index) {
+        return this.closingOrder.index === index;
     }
 
-    close(index) {
-        this.orders.push(index);
+    pushNewOrder(order) {
+        this.closingOrder = order;
+    }
+
+    close(order) {
 
         this.active = false;
     }
