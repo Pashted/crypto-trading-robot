@@ -1,22 +1,21 @@
 class Deal {
-    constructor(order) {
+    constructor(orderID) {
 
-        this.openingOrder = order;
+        this.openingOrderID = parseInt(orderID);
 
         this.active = true;
 
     }
 
-    includes(index) {
-        return this.closingOrder.index === index;
+    includes(orderID) {
+        return this.closingOrderID ===  parseInt(orderID)
     }
 
-    pushNewOrder(order) {
-        this.closingOrder = order;
+    pushClosingOrder(orderID) {
+        this.closingOrderID =  parseInt(orderID)
     }
 
-    close(order) {
-
+    close() {
         this.active = false;
     }
 

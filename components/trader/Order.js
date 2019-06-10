@@ -1,14 +1,15 @@
 class Order {
     constructor(
         [ type, ts, price, amount = 0, status = 'new' ],
-        { deposit, orders, fee, send, metadata, depSymbols: { sell, buy } }
+        { deposit, orders, fee, send, metadata, symbols: { sell, buy }, countOrders }
     ) {
         this.pair = sell + buy;
 
-        this.index = orders[type].length;
         this.status = status;
 
         this.active = true;
+
+        this.id = Math.floor(Math.random() * 1000000);
 
         this.type = type;
         this.ts = ts;
@@ -19,17 +20,29 @@ class Order {
         this._send = send;
         this._metadata = metadata;
 
+
         // amount of blocked currency
-        this.amount = amount || (
-            orders[type].length
-            ? orders[type].reduce((total, order) => total + order.amount, deposit[type]) / 5
-            : deposit[type] / 5
-        );
+        if (amount) {
+            this.amount = amount;
+
+        } else {
+            const _count = countOrders(orders),
+                ordersCount = { sell: _count[0], buy: _count[1] }[type];
+
+            this.amount = ordersCount
+
+                          ? Object.keys(orders)
+                              .reduce((total, orderID) => total + orders[orderID].amount, deposit[type]) / 5
+
+                          : deposit[type] / 5;
+
+        }
 
 
         this.add();
 
     }
+
 
     send({ action, ts = 0 }) {
         this._send({
@@ -39,15 +52,13 @@ class Order {
                 action,
                 order:  [ ts || this.ts, this.price ],
                 amount: this.amount,
-                state:  this.state,
+                status: this.status,
+                active: this.active,
                 pair:   this.pair,
             }
         })
     }
 
-    add() {
-        this.send({ action: 'add' });
-    }
 
     exec(ts) {
         this.active = false;
@@ -60,6 +71,11 @@ class Order {
         this.result *= 1 - this.fee / 100;
 
         this.send({ action: 'exec', ts });
+    }
+
+
+    add() {
+        this.send({ action: 'add' });
     }
 
 
